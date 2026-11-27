@@ -19,14 +19,15 @@ export const site = {
   tagline: 'PHP Developer / WordPress Developer',
   linkedin: 'https://www.linkedin.com/in/kevinflorenzdaus/',
   // Not published until Kevin supplies them (never guess contact details):
-  email: null as string | null,  // public contact address shown next to the form
+  email: null as string | null,  // public contact address
   github: null as string | null, // GitHub profile URL for the footer
-  contactPath: '/contact/',
+  // All "Contact" / "Get in touch" links go to LinkedIn (Kevin, 2026-11-27: no contact form)
+  contactUrl: 'https://www.linkedin.com/in/kevinflorenzdaus/',
   // Header nav (editorial brief: Work, About, Contact). "Work" needs at least one case study (getWork()).
   nav: [
     { label: 'Work', href: '/work/', needsWork: true },
     { label: 'About', href: '/about-me/' },
-    { label: 'Contact', href: '/contact/' },
+    { label: 'Contact', href: 'https://www.linkedin.com/in/kevinflorenzdaus/', external: true },
   ],
   // Footer nav: everything, so Services and Articles stay one click away
   footerNav: [
@@ -34,7 +35,7 @@ export const site = {
     { label: 'About', href: '/about-me/' },
     { label: 'Services', href: '/services/' },
     { label: 'Articles', href: '/articles/' },
-    { label: 'Contact', href: '/contact/' },
+    { label: 'Contact', href: 'https://www.linkedin.com/in/kevinflorenzdaus/', external: true },
   ],
 };
 

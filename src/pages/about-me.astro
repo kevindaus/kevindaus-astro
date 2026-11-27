@@ -4,9 +4,9 @@
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
+import ContactButton from '../components/ContactButton.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import { seo } from '../data/seo';
-import { site as siteData } from '../data/site';
 import { jobs } from '../data/experience';
 import { stack } from '../data/stack';
 import { breadcrumb, mainEntityId } from '../lib/schema';
@@ -113,7 +113,7 @@ const person = mainEntityId(site, 'Person');
   <section class="mx-auto mt-24 max-w-wide px-5 sm:px-8 lg:px-12">
     <div class="reveal flex flex-wrap items-end justify-between gap-8 border-t border-fg pt-8">
       <h2 class="max-w-[14ch] text-display">Need a hand on your project?</h2>
-      <a href={siteData.contactPath} class="btn btn-primary">Get in touch <span class="arrow" aria-hidden="true">→</span></a>
+      <ContactButton />
     </div>
   </section>
 </BaseLayout>

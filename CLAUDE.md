@@ -16,11 +16,11 @@ A static Astro rebuild of Kevin's WordPress/Elementor personal site in the appro
 Never invent content, NAP, metrics or meta. Missing → ask. Case-study screenshots: blur client names, emails and internal figures before committing (never commit an unredacted original).
 
 ## Stack
-Astro 7 static + ClientRouter (View Transitions) · Tailwind v4 (semantic colour vars + `@theme` in src/styles/global.css; motion tokens in src/styles/motion.css; class-based dark mode) · MDX (posts, case studies) · Shiki · Fontsource: Space Grotesk + Inter + JetBrains Mono (variable) · satori + resvg (OG images at build) · @astrojs/rss · contact form → Pages Function `functions/api/contact.ts` → Resend · Cloudflare Web Analytics · Cloudflare Pages `kevinflorenzdaus-com` · GitLab `northbase/kevinflorenzdaus-com` · Node 22 (.nvmrc)
+Astro 7 static + ClientRouter (View Transitions) · Tailwind v4 (semantic colour vars + `@theme` in src/styles/global.css; motion tokens in src/styles/motion.css; class-based dark mode) · MDX (posts, case studies) · Shiki · Fontsource: Space Grotesk + Inter + JetBrains Mono (variable) · satori + resvg (OG images at build) · @astrojs/rss · no forms (every Contact / "Get in touch" link → LinkedIn via `site.contactUrl` / `ContactButton`) · Cloudflare Web Analytics · Cloudflare Pages `kevinflorenzdaus-com` · GitLab `northbase/kevinflorenzdaus-com` · Node 22 (.nvmrc)
 
 ## Rules
 - Read components before writing; name them for what they are.
-- Near-zero JS. The only scripts are the ClientRouter, src/scripts/ui.ts (+ reveal.ts), and the page scripts for the TOC, reading progress, article filter and contact form. Page scripts init on `astro:page-load` and must be safe to run more than once.
+- Near-zero JS. The only scripts are the ClientRouter, src/scripts/ui.ts (+ reveal.ts), and the page scripts for the TOC, reading progress and article filter. Page scripts init on `astro:page-load` and must be safe to run more than once.
 - One <h1>; alt on every image; width/height on every image (astro:assets).
 - All <head> output goes through SeoHead in BaseLayout. Schema via buildSchema() — Person-centred `/#person`.
 - Posts live in src/content/blog/*.mdx at their WordPress URL via frontmatter `path` (/YYYY/MM/DD/slug/). `markdown.smartypants` is off so punctuation stays verbatim.

@@ -107,7 +107,7 @@ function activeNav() {
   const here = location.pathname;
   document.querySelectorAll<HTMLAnchorElement>('a[data-nav]').forEach((a) => {
     const href = a.getAttribute('href')!;
-    const on = here.startsWith(href) || (href === '/articles/' && /^\/20\d\d\//.test(here));
+    const on = href.startsWith('/') && (here.startsWith(href) || (href === '/articles/' && /^\/20\d\d\//.test(here)));
     if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
   });
 }

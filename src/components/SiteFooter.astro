@@ -16,7 +16,7 @@ const year = new Date().getFullYear();
     <nav aria-label="Footer" class="md:col-span-3">
       <p class="mono text-subtle">Pages</p>
       <ul class="mt-4 space-y-2">
-        {nav.map((l) => <li><a href={l.href} class="link-underline hover:text-accent-ink">{l.label}</a></li>)}
+        {nav.map((l) => <li><a href={l.href} class="link-underline hover:text-accent-ink" {...(l.external && { rel: 'noopener', target: '_blank' })}>{l.label}{l.external && <><span class="sr-only"> on LinkedIn (opens in a new tab)</span> <span aria-hidden="true">↗</span></>}</a></li>)}
       </ul>
     </nav>
     <div class="md:col-span-4">

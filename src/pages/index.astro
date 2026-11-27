@@ -8,6 +8,7 @@ import SectionHeader from '../components/SectionHeader.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import Testimonial from '../components/Testimonial.astro';
 import ArticleItem from '../components/ArticleItem.astro';
+import ContactButton from '../components/ContactButton.astro';
 import { site } from '../data/site';
 import { seo } from '../data/seo';
 import { hero, about, services, contactCopy } from '../data/home';
@@ -129,12 +130,11 @@ const agencies = [...new Set(work.map((w) => w.data.via).filter(Boolean))];
       <div class="reveal mt-12 grid gap-10 border-t border-invert-fg/20 pt-8 md:grid-cols-12 md:gap-8">
         <p class="max-w-[36ch] text-xl leading-snug md:col-span-5">{contactCopy.intro}</p>
         <div class="md:col-span-3">
-          <a href={site.contactPath} class="btn border-transparent bg-accent text-accent-fg hover:bg-invert-fg hover:text-invert-bg">Get in touch <span class="arrow" aria-hidden="true">→</span></a>
+          <ContactButton label="Get in touch" class="btn border-transparent bg-accent text-accent-fg hover:bg-invert-fg hover:text-invert-bg" />
         </div>
         <dl class="space-y-3 md:col-span-4">
           {site.email && <div class="flex gap-4"><dt class="mono w-24 opacity-75">Email</dt><dd><a href={`mailto:${site.email}`} class="link-underline">{site.email}</a></dd></div>}
           <div class="flex gap-4"><dt class="mono w-24 opacity-75">LinkedIn</dt><dd><a href={site.linkedin} class="link-underline" rel="noopener" target="_blank">kevinflorenzdaus<span class="sr-only"> (opens in a new tab)</span> <span aria-hidden="true">↗</span></a></dd></div>
-          <div class="flex gap-4"><dt class="mono w-24 opacity-75">Form</dt><dd><a href={site.contactPath} class="link-underline">/contact/</a></dd></div>
         </dl>
       </div>
     </div>

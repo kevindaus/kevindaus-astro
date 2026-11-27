@@ -58,7 +58,8 @@ Space Grotesk Variable (headings, wordmark, stack list), Inter Variable (body), 
 | Testimonial | `Testimonial.astro` | index, large Space Grotesk quote, rust quote marks, greyscale avatar |
 | Article row | `ArticleItem.astro` | ISO date, title (→ rust), reading time, "→" slides in |
 | Stack list | home + About | grouped, slash-separated, no ratings or progress bars |
-| Code block, Callout, TOC, Reading progress, Contact form, Tag | unchanged components, restyled through tokens | see `redesign` docs; form states: idle · invalid · sending · sent · error |
+| Contact button | `ContactButton.astro` | every "Get in touch" CTA → LinkedIn, new tab, ↗ + screen-reader "opens in a new tab". The nav "Contact" link does the same |
+| Code block, Callout, TOC, Reading progress, Tag | unchanged components, restyled through tokens | see `redesign` docs |
 
 ## 5. Motion
 
@@ -76,7 +77,7 @@ Tokens (`motion.css`): durations 100 / 150 / 250 / 400ms · ease-out `cubic-bezi
 | Page transitions | ClientRouter navigation | cross-fade of `<main>`; title + cover morph card → case study | 250ms | none |
 | Theme toggle | click | circular reveal from the button; icon cross-rotate | 400 / 250ms | instant |
 | Header | scroll | hairline/blur fade; mobile hide on scroll down | 150 / 250ms | no hide |
-| Reading progress, TOC indicator, copy, form, filter, mobile menu | as on `redesign` | transform/opacity | 150–250ms | instant or ≤100ms fade |
+| Reading progress, TOC indicator, copy, filter, mobile menu | as on `redesign` | transform/opacity | 150–250ms | instant or ≤100ms fade |
 
 No parallax, scroll hijacking, floating or looping decoration, bounce or 3D.
 

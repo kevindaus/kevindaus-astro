@@ -153,12 +153,6 @@ html[data-theme-switching]::view-transition-new(root) { animation: none; mix-ble
 .toc a { transition: color var(--duration-fast) var(--ease-out); }
 .toc a[aria-current='true'] { color: var(--c-fg); }
 
-/* ---------- forms ---------- */
-.field-input { transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out); }
-.field-error:not([hidden]) { animation: fade-in var(--duration-base) var(--ease-out); }
-.spinner { width: 1em; height: 1em; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; }
-.form-success:not([hidden]) { animation: fade-up var(--duration-base) var(--ease-out); }
-
 /* ---------- article filter: quick fade while the list reflows ---------- */
 .filter-list { transition: opacity var(--duration-base) var(--ease-out); }
 .filter-list.is-filtering { opacity: 0; transition: opacity var(--duration-fast) var(--ease-in); }
@@ -170,7 +164,6 @@ html { scroll-behavior: smooth; }
 @keyframes fade-up { from { opacity: 0; transform: translateY(var(--distance-md)); } to { opacity: 1; transform: none; } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
-@keyframes spin { to { transform: rotate(360deg); } }
 @keyframes progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
 /* ---------- reduced motion: no movement; state changes are instant or a ≤100ms fade ---------- */
@@ -180,8 +173,7 @@ html { scroll-behavior: smooth; }
   html[data-js] .reveal-stagger:not(.is-in) > * { opacity: 1; transform: none; }
   .reveal, .reveal-stagger > * { transition: none; }
   html[data-hero] .hero-item { animation: none; }
-  .status-dot, .spinner { animation: none; }
-  .spinner { border-right-color: currentColor; opacity: .6; }
+  .status-dot { animation: none; }
   .read-progress { display: none; }
   .btn-primary:hover { translate: none; }
   .btn:active { scale: none; }
@@ -198,7 +190,7 @@ html { scroll-behavior: smooth; }
   }
   .theme-icon { rotate: 0deg !important; transition: opacity var(--duration-instant) linear; }
   .toc-indicator { transition: none; }
-  .form-success:not([hidden]), .field-error:not([hidden]), .copy-btn[data-copied] .copy-done { animation: fade-in var(--duration-instant) linear; }
+  .copy-btn[data-copied] .copy-done { animation: fade-in var(--duration-instant) linear; }
   .is-filtering, .filter-list { transition: opacity var(--duration-instant) linear; }
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }

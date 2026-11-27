@@ -13,7 +13,7 @@ const realWork = readdirSync(workDir).filter((f) => /\.mdx?$/.test(f) && !f.star
   .filter((src) => !/^placeholder:\s*true/m.test(src) && !/^draft:\s*true/m.test(src));
 /** @param {string} page */
 const sitemapFilter = (page) =>
-  !page.includes('/contact/sent/') && !page.includes('/work/placeholder-') && (realWork.length > 0 || !page.endsWith('/work/'));
+  !page.includes('/work/placeholder-') && (realWork.length > 0 || !page.endsWith('/work/'));
 
 export default defineConfig({
   site: 'https://kevinflorenzdaus.com', // canonical origin: apex, https (www + http 301 here on the live site)

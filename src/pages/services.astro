@@ -4,8 +4,8 @@
 // (src/data/services.ts). The subtitle is the homepage's own section heading, verbatim.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
+import ContactButton from '../components/ContactButton.astro';
 import { seo } from '../data/seo';
-import { site as siteData } from '../data/site';
 import { services } from '../data/services';
 import { getPosts, postPath } from '../lib/content';
 import { breadcrumb, mainEntityId } from '../lib/schema';
@@ -67,7 +67,7 @@ const serviceNodes = services.map((s) => ({
 
     <div class="reveal mt-24 flex flex-wrap items-end justify-between gap-8 border-t border-fg pt-8">
       <h2 class="max-w-[14ch] text-display">Need a hand on your project?</h2>
-      <a href={siteData.contactPath} class="btn btn-primary">Get in touch <span class="arrow" aria-hidden="true">→</span></a>
+      <ContactButton />
     </div>
   </div>
 </BaseLayout>

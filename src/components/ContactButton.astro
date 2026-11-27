@@ -1,0 +1,7 @@
+---
+// Every "Get in touch" CTA: goes to Kevin's LinkedIn (no contact form, Kevin 2026-11-27). Opens in a new tab.
+import { site } from '../data/site';
+interface Props { label?: string; class?: string }
+const { label = 'Get in touch', class: cls = 'btn btn-primary' } = Astro.props;
+---
+<a href={site.contactUrl} class={cls} rel="noopener" target="_blank">{label}<span class="sr-only"> on LinkedIn (opens in a new tab)</span> <span class="arrow" aria-hidden="true">↗</span></a>

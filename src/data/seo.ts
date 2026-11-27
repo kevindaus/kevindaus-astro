@@ -28,13 +28,6 @@ export const seo = {
     title: 'Work - Kevin Florenz Daus - PHP Programmer / WordPress Developer',
     description: 'Selected WordPress, Laravel and PHP projects: the client, the problem, what I did and the outcome.',
   },
-  contact: {
-    title: 'Contact - Kevin Florenz Daus - PHP Programmer / WordPress Developer',
-    description: 'Get in touch about a WordPress build, maintenance and security, Laravel or PHP development, or technical SEO.',
-  },
-  contactSent: {
-    title: 'Message sent - Kevin Florenz Daus',
-  },
   notFound: {
     title: 'Page not found - Kevin Florenz Daus',
   },

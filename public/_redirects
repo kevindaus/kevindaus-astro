@@ -22,3 +22,8 @@
 # WordPress feed → the new RSS feed (redesign 2026-11-27; was 410)
 /feed/             /rss.xml     301
 /feed              /rss.xml     301
+
+# contact form removed (2026-11-27): contact is LinkedIn only
+/contact/          https://www.linkedin.com/in/kevinflorenzdaus/   301
+/contact           https://www.linkedin.com/in/kevinflorenzdaus/   301
+/contact/sent/     https://www.linkedin.com/in/kevinflorenzdaus/   301

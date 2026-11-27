@@ -25,7 +25,7 @@
   --c-accent-soft: #F8EDE7; /* callout fill (rust ink stays ≥4.5:1 on it) */
   --c-invert-bg: #171717;   /* charcoal bands */
   --c-invert-fg: #F5F4F0;
-  --c-danger: #B42318;
+  --c-danger: #B42318;      /* callout warnings */
 }
 /* ---------- colour (dark) ---------- */
 .dark {
@@ -136,19 +136,6 @@
 
   /* ---------- text link ---------- */
   .text-link { color: var(--c-accent-ink); }
-
-  /* ---------- form fields ---------- */
-  .field-label { display: block; font-size: .875rem; font-weight: 550; margin-bottom: .375rem; }
-  .field-input {
-    display: block; width: 100%; border: 1px solid var(--c-line-strong); border-radius: var(--radius-md);
-    background: var(--c-surface); color: var(--c-fg); padding: .75rem .875rem; font: inherit; font-size: 1rem;
-  }
-  .field-input:focus { outline: none; border-color: var(--c-accent); box-shadow: 0 0 0 1px var(--c-accent); }
-  .field-input:focus-visible { outline: none; }
-  .field-input[aria-invalid='true'] { border-color: var(--c-danger); }
-  textarea.field-input { min-height: 9rem; resize: vertical; }
-  select.field-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%2371717A' stroke-width='1.5'%3E%3Cpath d='m3 4.5 3 3 3-3'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right .75rem center; padding-right: 2rem; }
-  .field-error { margin-top: .375rem; font-size: .8125rem; color: var(--c-danger); }
 
   /* ---------- tag ---------- */
   .tag { display: inline-flex; align-items: center; font-family: var(--font-mono); font-size: .75rem; line-height: 1; padding: .35rem .55rem; border: 1px solid var(--c-line); border-radius: var(--radius-sm); color: var(--c-muted); }

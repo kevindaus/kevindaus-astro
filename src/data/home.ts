@@ -1,4 +1,4 @@
-// Homepage + contact copy for the "Editorial" redesign (branch redesign-editorial, 2026-11-27).
+// Homepage copy (contact = LinkedIn, no form) for the "Editorial" redesign (branch redesign-editorial, 2026-11-27).
 // Labels: VERBATIM = unchanged from the live site · BRIEF = wording given in docs/kevinflorenzdaus-redesign-prompt-gpt.md ·
 // DRAFT = reworded from facts on the live site (About page, experience, services). Drafts are listed under
 // "Copy Awaiting Approval" in docs/implementation-progress.md.
@@ -35,5 +35,5 @@ export const services = [ // DRAFT descriptions (outcome-focused rewording of th
 
 export const contactCopy = {
   heading: 'Need a hand on your project?', // VERBATIM (live /articles/ CTA)
-  intro: 'Tell me what you’re building, or what needs fixing. I’ll reply by email.', // DRAFT
+  intro: 'Tell me what you’re building, or what needs fixing. Send me a message on LinkedIn.', // DRAFT
 };

@@ -46,8 +46,6 @@ Status: **approved** by Kevin, 2026-09-29.
 | URL | Notes |
 |---|---|
 | `/portfolio/` | Already 404. The Portfolio section and its button are removed for launch, so nothing links to it |
-| `/contact/` | Already 404 on the live site. **New page** in the redesign (2026-11-27): the contact form |
-| `/contact/sent/` | New, noindex, not in the sitemap: where the form lands without JavaScript |
+| `/contact/`, `/contact/sent/` | Already 404 on the live site. Briefly a form page in the redesign; **removed 2026-11-27** (contact = LinkedIn). Now 301 → `https://www.linkedin.com/in/kevinflorenzdaus/` (public/_redirects) |
 | `/work/`, `/work/<slug>/` | New case-study pages. Not built until the first case study is published |
 | `/rss.xml`, `/og/*.png` | New: RSS feed and generated Open Graph cards |
-| `/api/contact` | New Pages Function (POST only) |
