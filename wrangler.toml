@@ -1,0 +1,6 @@
+# Cloudflare Pages project config (docs/deployment.md). Used by `wrangler pages dev` and `wrangler pages deploy`.
+# Static Astro output in dist/ + Pages Functions in functions/ (410s for removed WordPress URLs).
+# _redirects (301s) and _headers (security headers, noindex on *.pages.dev previews) ship from public/.
+name = "kevinflorenzdaus-com"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-10-03" # newest date the pinned wrangler 4.143 runtime supports

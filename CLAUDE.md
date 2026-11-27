@@ -34,11 +34,11 @@ Lighthouse mobile Perf/A11y/BP ≥ 95, SEO 100 (all pages at 100/100/100/100 on 
 Definition of done: playbook §15.
 
 ## Dev
-`npm run dev` (4321) · `npm run build` (previews) · `npm run build:prod` (production) · `npm run preview` · `npx astro check` · `npx wrangler pages dev dist --port 8788` (redirects/410s/headers as Cloudflare serves them) ·
+`npm run dev` (4321) · `npm run build` (previews) · `npm run build:prod` (production) · `npm run preview` · `npx astro check` · `npm run pages:dev` (wrangler.toml; redirects/410s/headers as Cloudflare serves them, port 8788) · `npm run deploy:preview` · `npm run deploy:prod` (🛑 approval) ·
 `npx lighthouse http://localhost:4321 --view` · port clash: `lsof -i :4321 -t | xargs kill -9`
 
 ## Deployment
-docs/deployment.md. `main` → production, other branches → preview (`<branch>.kevinflorenzdaus-com.pages.dev`, noindex via _headers). Git-connected builds: set `NODE_VERSION=22`. Rollback: Pages → Deployments → promote the previous one.
+docs/deployment.md + wrangler.toml. `main` → production, other branches → preview (`<branch>.kevinflorenzdaus-com.pages.dev`, noindex via _headers). Git-connected builds: set `NODE_VERSION=22`. Rollback: Pages → Deployments → promote the previous one.
 
 ## Project Gotchas
 - Cloudflare `_redirects` can't send 410 → removed URLs are Pages Functions (`functions/<path>/index.ts` → `_lib/gone.ts`). Deploy from the repo root so `functions/` ships.

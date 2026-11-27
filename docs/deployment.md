@@ -1,21 +1,35 @@
 # Deployment — Cloudflare Pages
 
-**Project:** `kevinflorenzdaus-com` · production branch `main` · build `npm run build` → `dist/` · Pages Functions in `functions/` (410s only)
-**Node:** 22 (`.nvmrc`, `engines`). Git-connected builds need `NODE_VERSION=22` set in the Pages project env. Git builds of `main` count as production automatically (`CF_PAGES_BRANCH=main`), so placeholder case studies are dropped; a local build for a `main` upload must use `npm run build:prod`.
-**Deploy route today:** direct upload with Wrangler (`npx wrangler pages deploy dist`), run from the repo root so `functions/` ships too. Connect the GitLab repo in the Pages dashboard once `northbase/kevinflorenzdaus-com` exists.
+**Config:** `wrangler.toml` (project `kevinflorenzdaus-com`, output `./dist`, compatibility date `2026-10-03`: the newest the pinned wrangler 4.143 runtime supports; bump it together with wrangler). Static output in `dist/`, Pages Functions in `functions/` (410s only), `_redirects` + `_headers` from `public/`. Production branch `main`.
+**Node:** 22 (`.nvmrc`, `engines`). Pages' build image reads `.nvmrc`; set `NODE_VERSION=22` in the project env as a fallback.
+**Placeholders:** production builds must drop placeholder case studies: `npm run build:prod` locally, or automatic on a Git build of `main` (`CF_PAGES_BRANCH=main`). There are none today.
 
-## Commands
+## Option A — direct upload with Wrangler (works now, no Git remote needed)
 
 ```bash
-npx wrangler login                                   # once, interactive (Kevin)
-npx wrangler pages project create kevinflorenzdaus-com --production-branch main
-npm run build        # previews: includes placeholder case studies (marked, noindex)
-npx wrangler pages deploy dist --project-name kevinflorenzdaus-com --branch preview   # preview → preview.kevinflorenzdaus-com.pages.dev
-npm run build:prod   # production: SITE_ENV=production drops placeholder case studies
-npx wrangler pages deploy dist --project-name kevinflorenzdaus-com --branch main      # 🛑 production (approval required)
+npx wrangler login                                                    # once, interactive (Kevin): `! npx wrangler login`
+npx wrangler pages project create kevinflorenzdaus-com --production-branch main   # once
+npm run deploy:preview   # build → preview deployment → preview.kevinflorenzdaus-com.pages.dev (noindex)
+npm run deploy:prod      # 🛑 production (approval required): build:prod → deploy --branch main
 ```
 
-Local check of redirects/410s/headers with Cloudflare's runtime: `npx wrangler pages dev dist --port 8788`.
+Run from the repo root so `functions/` ships. Local check with Cloudflare's runtime: `npm run build && npm run pages:dev` (port 8788).
+
+## Option B — Git integration (once the GitLab repo exists)
+
+Pages dashboard → Create → Connect to Git → `northbase/kevinflorenzdaus-com`:
+
+| Setting | Value |
+|---|---|
+| Production branch | `main` |
+| Framework preset | Astro |
+| Build command | `npm run build` (Git builds of `main` drop placeholders automatically) |
+| Build output directory | `dist` |
+| Root directory | `/` |
+| Environment variable | `NODE_VERSION=22` (Production + Preview) |
+
+Every other branch then gets a preview at `<branch>.kevinflorenzdaus-com.pages.dev`. If the project was already created with Option A, it can't be switched to Git: create the Git project under a new name or delete the direct-upload project first.
+
 Previews on `*.pages.dev` send `X-Robots-Tag: noindex` (`public/_headers`). For a stronger preview gate: Cloudflare One → Access → self-hosted app on `*.kevinflorenzdaus-com.pages.dev` **and** `kevinflorenzdaus-com.pages.dev`, allowing listed emails with a one-time PIN. Remove or adjust it before the flip.
 
 ## Cutover runbook 🛑 needs Kevin's approval at the flip

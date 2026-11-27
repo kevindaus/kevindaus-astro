@@ -12,7 +12,10 @@
     "build:prod": "SITE_ENV=production astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "astro": "astro"
+    "astro": "astro",
+    "pages:dev": "wrangler pages dev",
+    "deploy:preview": "npm run build && wrangler pages deploy --branch preview",
+    "deploy:prod": "npm run build:prod && wrangler pages deploy --branch main"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.2",
