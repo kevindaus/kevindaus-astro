@@ -1,5 +1,5 @@
 # Redirect map — every rule has a row in docs/redirects.md (approved 2026-09-29).
-# 410s (test pages, /feed/) are Pages Functions in functions/ — _redirects can't send 410.
+# 410s (test pages) are Pages Functions in functions/ — _redirects can't send 410.
 
 # WordPress archives
 /category/*        /articles/   301
@@ -18,3 +18,7 @@
 /services-v2       /services/   301
 /thank-you-page/   /            301
 /thank-you-page    /            301
+
+# WordPress feed → the new RSS feed (redesign 2026-11-27; was 410)
+/feed/             /rss.xml     301
+/feed              /rss.xml     301

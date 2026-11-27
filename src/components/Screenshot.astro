@@ -1,0 +1,10 @@
+---
+// An article screenshot in a thin frame.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+interface Props { src: ImageMetadata; alt: string }
+const { src, alt } = Astro.props;
+---
+<figure class="not-prose my-8 overflow-hidden rounded-md border border-line bg-surface">
+  <Image src={src} alt={alt} widths={[680, 1360]} sizes="(min-width: 760px) 680px, 92vw" class="block h-auto w-full" />
+</figure>

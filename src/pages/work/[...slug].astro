@@ -1,0 +1,119 @@
+---
+// /work/ (index, slug = undefined) and /work/<slug>/ (case study) from the `work` collection.
+// Nothing is built when there are no case studies. Placeholder entries are visibly marked, noindex,
+// kept out of the sitemap, and dropped from production builds (src/lib/content.ts → getWork()).
+// Case study body: Problem → Approach → Implementation → Outcome (MDX ## headings); Stack from frontmatter.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import ProjectImage from '../../components/ProjectImage.astro';
+import { seo } from '../../data/seo';
+import { site as siteData } from '../../data/site';
+import { getWork, workPath, renderEntry, fmtDate, type CaseStudy } from '../../lib/content';
+import { breadcrumb, mainEntityId } from '../../lib/schema';
+
+export async function getStaticPaths() {
+  const items = await getWork();
+  if (!items.length) return [];
+  return [
+    { params: { slug: undefined }, props: { items } },
+    ...items.map((item, i) => ({ params: { slug: item.id }, props: { item, next: items[(i + 1) % items.length] } })),
+  ];
+}
+
+const { items, item, next } = Astro.props as { items?: CaseStudy[]; item?: CaseStudy; next?: CaseStudy };
+const site = Astro.site!.href;
+const workUrl = new URL('/work/', Astro.site).href;
+const entity = mainEntityId(site, siteData.org.type);
+const rendered = item ? await renderEntry(item) : undefined;
+const url = item ? new URL(workPath(item), Astro.site).href : workUrl;
+const allPlaceholders = items?.every((w) => w.data.placeholder) ?? false;
+const agencies = [...new Set((items ?? []).map((w) => w.data.via).filter(Boolean))];
+---
+{items && (
+  <BaseLayout title={seo.work.title} description={seo.work.description} path="/work/" pageType="CollectionPage" noindex={allPlaceholders}
+    schemaNodes={[
+      breadcrumb(site, [{ name: 'Work', url: workUrl }]),
+      { '@type': 'ItemList', '@id': `${workUrl}#list`, itemListElement: items.filter((w) => !w.data.placeholder).map((w, i) => ({ '@type': 'ListItem', position: i + 1, url: new URL(workPath(w), Astro.site).href, name: w.data.title })) },
+    ]}>
+    <section class="mx-auto max-w-wide px-5 pt-12 sm:px-8 sm:pt-16 lg:px-12">
+      <Breadcrumbs items={[{ label: 'Work' }]} />
+      <h1 class="mt-8 text-hero font-bold">Work</h1>
+      <p class="mt-6 max-w-[46ch] text-xl leading-snug text-muted">{seo.work.description}</p>
+      {agencies.length > 0 && <p class="mt-4 max-w-[56ch] text-muted">Projects marked “with {agencies.join('/')}” are websites I worked on while working with {agencies.join(' and ')}.</p>}
+      {allPlaceholders && <p class="mono mt-6 inline-block border border-accent px-2 py-1 text-accent-ink">Placeholder projects: real case studies to be supplied</p>}
+      <div class="mt-16 grid gap-x-8 gap-y-16 border-t border-fg pt-10 md:grid-cols-2">
+        {items.map((w, i) => <div class="reveal"><ProjectCard item={w} index={i} heading="h2" /></div>)}
+      </div>
+    </section>
+  </BaseLayout>
+)}
+
+{item && rendered && (
+  <BaseLayout title={`${item.data.title} - Work - Kevin Florenz Daus`} description={item.data.description} path={workPath(item)} ogType="article"
+    noindex={item.data.placeholder}
+    published={item.data.date?.toISOString()} modified={(item.data.updated ?? item.data.date)?.toISOString()}
+    schemaNodes={[
+      breadcrumb(site, [{ name: 'Work', url: workUrl }, { name: item.data.title, url }]),
+      { '@type': 'Article', '@id': `${url}#article`, headline: item.data.title, description: item.data.description,
+        ...(item.data.date && { datePublished: item.data.date.toISOString(), dateModified: (item.data.updated ?? item.data.date).toISOString() }),
+        author: { '@id': entity }, publisher: { '@id': entity }, mainEntityOfPage: { '@id': `${url}#webpage` }, keywords: item.data.stack.join(', '), inLanguage: siteData.lang },
+    ]}>
+    <article class="mx-auto max-w-wide px-5 pt-12 sm:px-8 sm:pt-16 lg:px-12">
+      <Breadcrumbs items={[{ label: 'Work', href: '/work/' }]} />
+      {item.data.placeholder && (
+        <p class="mono mt-8 border border-accent px-3 py-2 text-accent-ink" role="note">Placeholder case study: no real project has been supplied yet. This page is not indexed and is left out of production builds.</p>
+      )}
+      <header class="mt-8 grid gap-8 md:grid-cols-12">
+        <p class="mono text-muted md:col-span-3">{item.data.category}</p>
+        <div class="md:col-span-9">
+          <h1 class="text-display" transition:name={`work-title-${item.id}`}>{item.data.title}</h1>
+          <p class="mt-6 max-w-[52ch] text-xl leading-snug text-muted">{item.data.description}</p>
+        </div>
+      </header>
+
+      <dl class="mt-12 grid gap-6 border-y border-line py-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div><dt class="mono text-muted">Client</dt><dd class="mt-1">{item.data.client ?? (item.data.placeholder ? 'To be supplied' : '—')}</dd></div>
+        <div><dt class="mono text-muted">{item.data.role ? 'My role' : 'Type'}</dt><dd class="mt-1">{item.data.role ?? item.data.clientType ?? item.data.category}</dd></div>
+        <div><dt class="mono text-muted">Stack</dt><dd class="mt-1">{item.data.stack.join(', ')}</dd></div>
+        <div>
+          <dt class="mono text-muted">{item.data.via ? 'Worked on with' : item.data.url ? 'Live site' : 'Date'}</dt>
+          <dd class="mt-1">{item.data.via
+            ? item.data.via
+            : item.data.url
+              ? <a href={item.data.url} class="text-link link-underline" rel="noopener" target="_blank">{new URL(item.data.url).hostname}<span class="sr-only"> (opens in a new tab)</span></a>
+              : item.data.date ? <time datetime={item.data.date.toISOString()}>{fmtDate(item.data.date)}</time> : '—'}</dd>
+        </div>
+      </dl>
+
+      <!-- the full screenshot, at its own aspect ratio (no crop on the case study page) -->
+      <div class:list={['img-reveal mt-10 overflow-hidden border border-line bg-surface', !item.data.cover && 'aspect-[16/9]']}
+        style={item.data.cover ? `aspect-ratio:${item.data.cover.width}/${item.data.cover.height}` : undefined} transition:name={`work-cover-${item.id}`}>
+        <ProjectImage src={item.data.cover} alt={item.data.coverAlt} label={item.data.title} sizes="(min-width: 1280px) 1180px, 92vw" eager />
+      </div>
+
+      <div class="mt-16 grid gap-8 md:grid-cols-12">
+        <p class="mono text-muted md:col-span-3">Case study</p>
+        <div class="prose max-w-read md:col-span-9">
+          <rendered.Content />
+          {item.data.stack.length > 0 && (
+            <>
+              <h2 id="stack">Stack</h2>
+              <p class="not-prose flex flex-wrap gap-1.5">{item.data.stack.map((s) => <span class="tag">{s}</span>)}</p>
+            </>
+          )}
+        </div>
+      </div>
+
+      {next && next.id !== item.id && (
+        <a href={workPath(next)} class="group mt-24 block border-t border-fg pt-6">
+          <span class="mono text-muted">Next project</span>
+          <span class="mt-4 flex items-end justify-between gap-6">
+            <span class="item-title text-title font-display font-semibold">{next.data.title}</span>
+            <span class="arrow text-3xl text-accent-ink" aria-hidden="true">→</span>
+          </span>
+        </a>
+      )}
+    </article>
+  </BaseLayout>
+)}

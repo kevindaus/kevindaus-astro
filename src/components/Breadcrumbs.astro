@@ -2,9 +2,9 @@
 interface Props { items: { label: string; href?: string }[] }
 const { items } = Astro.props;
 ---
-<nav aria-label="Breadcrumb" class="reveal label">
-  <a href="/" class="link-u hover:text-bone">Home</a>
+<nav aria-label="Breadcrumb" class="mono text-subtle">
+  <a href="/" class="link-underline hover:text-fg">home</a>
   {items.map((it) => (
-    <><span class="mx-2" aria-hidden="true">/</span>{it.href ? <a href={it.href} class="link-u hover:text-bone">{it.label}</a> : <span class="text-bone" aria-current="page">{it.label}</span>}</>
+    <><span class="mx-1.5" aria-hidden="true">/</span>{it.href ? <a href={it.href} class="link-underline hover:text-fg">{it.label.toLowerCase()}</a> : <span class="text-muted" aria-current="page">{it.label.toLowerCase()}</span>}</>
   ))}
 </nav>

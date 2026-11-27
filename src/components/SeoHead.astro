@@ -21,7 +21,7 @@ const {
 } = Astro.props;
 
 const canonical = new URL(path, Astro.site).href;
-const ogImageUrl = new URL(ogImage ?? '/og-default.jpg', Astro.site).href;
+const ogImageUrl = new URL(ogImage ?? '/og/site.png', Astro.site).href;
 const abs = (p: string) => new URL(p, Astro.site).href;
 
 const schema = buildSchema({
@@ -37,7 +37,7 @@ const schema = buildSchema({
 {description && <meta name="description" content={description} />}
 <link rel="canonical" href={canonical} />
 {noindex ? <meta name="robots" content="noindex, nofollow" /> : <meta name="robots" content="index, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large" />}
-<meta name="theme-color" content={site.themeColor} />
+<meta name="theme-color" content={site.themeColor.light} />
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />

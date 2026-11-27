@@ -3,13 +3,13 @@
 interface Props { reason: string }
 const { reason } = Astro.props;
 ---
-<li class="grid border-r border-b border-white/15 sm:grid-cols-2">
-  <div class="border-white/15 p-6 sm:border-r">
-    <p class="label"><strong class="font-normal">Reason:</strong></p>
-    <p class="display mt-3 text-3xl leading-none text-bone">{reason}</p>
+<li class="grid border-b border-line last:border-b-0 sm:grid-cols-2">
+  <div class="p-5">
+    <p class="mono text-subtle"><strong class="font-normal">Reason:</strong></p>
+    <p class="mt-1.5 font-medium">{reason}</p>
   </div>
-  <div class="border-t border-white/15 bg-white/[.03] p-6 sm:border-t-0">
-    <p class="label"><strong class="font-normal">Solution:</strong></p>
-    <p class="mt-3 text-bone"><slot /></p>
+  <div class="border-t border-line bg-surface p-5 sm:border-t-0 sm:border-l">
+    <p class="mono text-subtle"><strong class="font-normal">Solution:</strong></p>
+    <p class="mt-1.5 [&_code]:font-mono [&_code]:text-[.875em]"><slot /></p>
   </div>
 </li>

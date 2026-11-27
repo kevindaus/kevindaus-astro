@@ -27,6 +27,7 @@ Status: **approved** by Kevin, 2026-09-29.
 | `/category/linux/` | `/articles/` | ″ |
 | `/author/kevin_daus/` | `/about-me/` | Author archive (already 301s on the live site; point it at the person page) |
 | `/2023/`, `/2022/`, `/2022/04/`, `/2023/02/` (date archives) | `/articles/` | Date archives (live `/2023/` already 301s) |
+| `/feed/` | `/rss.xml` | Redesign (2026-11-27) adds an RSS feed; the WordPress feed URL (410 on the live site) now points at it. Was a 410 function |
 | `/services-v2/` | `/services/` | Unfinished template page with placeholder copy, in the sitemap. Repointed from `/` to the new Services page (2026-11-12) |
 | `/thank-you-page/` | `/` | Empty page (no form on the new site) |
 | `/wp-content/uploads/2023/02/*.png` (post screenshots) | new asset paths | Images move into `src/assets/`. Redirect only the ones found in GSC / backlinks |
@@ -39,11 +40,14 @@ Status: **approved** by Kevin, 2026-09-29.
 | `/elementor-26489/` | Elementor template placeholder ("This is a title") |
 | `/tteeete/` | Test page |
 | `/test-menu/` | Test page |
-| `/feed/` | Already 410 on the live site; no RSS unless requested |
 
 ## Not applicable
 
 | URL | Notes |
 |---|---|
 | `/portfolio/` | Already 404. The Portfolio section and its button are removed for launch, so nothing links to it |
-| `/contact/` | Already 404. All contact goes to LinkedIn |
+| `/contact/` | Already 404 on the live site. **New page** in the redesign (2026-11-27): the contact form |
+| `/contact/sent/` | New, noindex, not in the sitemap: where the form lands without JavaScript |
+| `/work/`, `/work/<slug>/` | New case-study pages. Not built until the first case study is published |
+| `/rss.xml`, `/og/*.png` | New: RSS feed and generated Open Graph cards |
+| `/api/contact` | New Pages Function (POST only) |

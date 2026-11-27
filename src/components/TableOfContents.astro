@@ -1,0 +1,52 @@
+---
+// Auto table of contents (sticky on desktop). The active heading is highlighted by a sliding
+// indicator as the reader scrolls (script below; no-JS: a plain list of links).
+interface Props { items: { id: string; label: string; depth?: number }[] }
+const { items } = Astro.props;
+---
+{items.length > 1 && (
+  <nav aria-label="On this page" class="toc" data-toc>
+    <p class="mono text-muted">On this page</p>
+    <div class="relative mt-3 border-l border-line">
+      <span class="toc-indicator" data-toc-indicator aria-hidden="true"></span>
+      <ol class="space-y-0.5 text-sm">
+        {items.map((t) => (
+          <li><a href={`#${t.id}`} class:list={['block py-1 text-muted hover:text-fg', t.depth === 3 ? 'pl-7' : 'pl-4']}>{t.label}</a></li>
+        ))}
+      </ol>
+    </div>
+  </nav>
+)}
+
+<script>
+  let stop: (() => void) | undefined;
+  function init() {
+    stop?.();
+    const toc = document.querySelector<HTMLElement>('[data-toc]');
+    if (!toc) return;
+    const links = [...toc.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')];
+    const bar = toc.querySelector<HTMLElement>('[data-toc-indicator]')!;
+    const heads = links.map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1)))).filter(Boolean) as HTMLElement[];
+    if (!heads.length) return;
+    const setActive = (i: number) => {
+      links.forEach((a, n) => a.setAttribute('aria-current', String(n === i)));
+      const a = links[i];
+      if (!a) { bar.style.opacity = '0'; return; }
+      bar.style.transform = `translateY(${a.offsetTop}px) scaleY(${a.offsetHeight})`;
+      bar.style.opacity = '1';
+    };
+    const onScroll = () => {
+      const line = innerHeight * 0.3;
+      let i = -1;
+      heads.forEach((h, n) => { if (h.getBoundingClientRect().top <= line) i = n; });
+      setActive(i);
+    };
+    let raf = 0;
+    const tick = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(onScroll); };
+    addEventListener('scroll', tick, { passive: true });
+    addEventListener('resize', tick);
+    onScroll();
+    stop = () => { removeEventListener('scroll', tick); removeEventListener('resize', tick); };
+  }
+  document.addEventListener('astro:page-load', init);
+</script>

@@ -1,0 +1,13 @@
+---
+// Where the form lands without JavaScript (303 from /api/contact). noindex, not in the sitemap.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { seo } from '../../data/seo';
+---
+<BaseLayout title={seo.contactSent.title} path="/contact/sent/" noindex>
+  <section class="mx-auto max-w-read px-5 pt-20 sm:px-8">
+    <p class="mono text-accent-ink">Message sent</p>
+    <h1 class="mt-6 text-display font-bold">Thanks, your message is on its way.</h1>
+    <p class="mt-4 text-lg text-muted">I’ll get back to you by email soon.</p>
+    <a href="/" class="btn btn-secondary mt-8">Back to home</a>
+  </section>
+</BaseLayout>

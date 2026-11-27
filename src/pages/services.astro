@@ -1,12 +1,11 @@
 ---
-// Services — new page (Kevin, 2026-11-12). No live equivalent; built from the Noir design system.
+// Services — every "What I do" row on the homepage links to a section here.
 // Lead paragraphs are verbatim from the live site; `body` and `included` are DRAFT copy awaiting approval
-// (src/data/services.ts). The H1 subtitle is the homepage's own section heading, verbatim.
-import { Image } from 'astro:assets';
+// (src/data/services.ts). The subtitle is the homepage's own section heading, verbatim.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import Eyebrow from '../components/Eyebrow.astro';
 import { seo } from '../data/seo';
+import { site as siteData } from '../data/site';
 import { services } from '../data/services';
 import { getPosts, postPath } from '../lib/content';
 import { breadcrumb, mainEntityId } from '../lib/schema';
@@ -29,79 +28,46 @@ const serviceNodes = services.map((s) => ({
 ---
 <BaseLayout title={seo.services.title} description={seo.services.description} path="/services/"
   schemaNodes={[breadcrumb(site, [{ name: 'Services', url }]), ...serviceNodes]}>
+  <div class="mx-auto max-w-wide px-5 pt-12 sm:px-8 sm:pt-16 lg:px-12">
+    <Breadcrumbs items={[{ label: 'Services' }]} />
+    <h1 class="mt-8 text-hero font-bold">Services</h1>
+    <p class="mt-6 max-w-[40ch] text-xl leading-snug text-muted">Things I do to help you with your business.</p>
 
-  <!-- HERO -->
-  <section class="relative overflow-hidden border-b border-white/10 pt-32 pb-16 sm:pt-40">
-    <div class="spotlight absolute inset-0" aria-hidden="true"></div>
-    <div class="relative mx-auto grid max-w-7xl items-end gap-8 px-4 sm:px-6 lg:grid-cols-12">
-      <div class="lg:col-span-12">
-        <Breadcrumbs items={[{ label: 'Services' }]} />
-        <h1 class="reveal display mt-6 text-display-page">Services</h1>
-      </div>
-      <p class="reveal border-l border-white/20 pl-6 text-base text-bone/75 lg:col-span-5 lg:col-start-8">Things I do to help you with your business.</p>
-    </div>
-  </section>
+    <nav aria-label="Services on this page" class="mt-10">
+      <ol class="mono flex flex-wrap gap-x-8 gap-y-3 text-muted">
+        {services.map((s, i) => <li><a href={`#${s.slug}`} class="link-underline hover:text-fg"><span class="text-accent-ink">{n(i)}</span> {s.title}</a></li>)}
+      </ol>
+    </nav>
 
-  <!-- INDEX -->
-  <nav aria-label="Services on this page" class="border-b border-white/10">
-    <ol class="mx-auto grid max-w-7xl px-4 sm:px-6 md:grid-cols-5">
+    <div class="mt-12 border-t border-fg">
       {services.map((s, i) => (
-        <li class="reveal border-white/10 max-md:border-b md:border-r md:last:border-r-0">
-          <a href={`#${s.slug}`} class="group flex h-full items-baseline gap-3 py-5 transition hover:bg-white/[.03] md:flex-col md:gap-4 md:px-5 md:py-8">
-            <span class="text-xs text-smoke">{n(i)}</span>
-            <span class="display text-xl leading-none transition group-hover:translate-x-1 md:text-2xl">{s.title}</span>
-          </a>
-        </li>
-      ))}
-    </ol>
-  </nav>
-
-  <!-- SERVICES -->
-  {services.map((s, i) => (
-    <section id={s.slug} class:list={['scroll-mt-24 border-b border-white/10 py-24 sm:py-32', i % 2 === 1 && 'bg-noir-900']}>
-      <div class="mx-auto grid max-w-7xl items-start gap-12 px-4 sm:px-6 lg:grid-cols-12 lg:gap-16">
-        <div class="lg:sticky lg:top-24 lg:col-span-5">
-          <div class="reveal">
-            <Eyebrow text={`No. ${n(i)}`} />
-            <h2 class="display mt-5 text-[clamp(3rem,6vw,5.5rem)] leading-[.9]">{s.title}</h2>
+        <section id={s.slug} class="grid scroll-mt-24 gap-x-8 gap-y-6 border-b border-line py-14 md:grid-cols-12" aria-labelledby={`${s.slug}-title`}>
+          <div class="reveal md:col-span-4">
+            <p class="mono text-accent-ink">{n(i)}</p>
+            <h2 id={`${s.slug}-title`} class="mt-3 text-heading">{s.title}</h2>
           </div>
-          {s.image ? (
-            <div class="reveal-img reveal mt-10 aspect-[4/3] overflow-hidden border border-white/15">
-              <Image src={s.image.src} alt={s.image.alt} widths={[480, 768, 1024]} sizes="(min-width: 1024px) 460px, 92vw" class="noir-img h-full w-full object-cover" />
-            </div>
-          ) : (
-            <div class="reveal relative mt-10 grid aspect-[4/3] place-items-center overflow-hidden border border-white/15 bg-noir-800" aria-hidden="true">
-              <div class="blinds-shadow absolute inset-0"></div>
-              <span class="display relative text-[clamp(5rem,12vw,9rem)] text-transparent [-webkit-text-stroke:1.5px_var(--color-bone)]">Plugin</span>
-            </div>
-          )}
-        </div>
-
-        <div class="lg:col-span-7">
-          <div class="reveal space-y-5 text-lg leading-relaxed text-bone">
-            {s.lead.map((p) => <p>{p}</p>)}
-          </div>
-          <!-- DRAFT copy below: needs Kevin's approval (src/data/services.ts) -->
-          <div class="reveal mt-8 space-y-5 border-l border-white/20 pl-6 text-base leading-relaxed text-bone/75">
-            {s.body.map((p) => <p>{p}</p>)}
-          </div>
-          <div class="reveal mt-12 border border-white/15 p-6 sm:p-8">
-            <h3 class="label">What’s included</h3>
-            <ul class="mt-6 space-y-3">
-              {s.included.map((t) => <li class="relative pl-7 text-bone/85"><span class="absolute left-0 text-smoke" aria-hidden="true">—</span>{t}</li>)}
+          <div class="reveal max-w-read md:col-span-7 md:col-start-6">
+            <div class="space-y-4 text-[1.0625rem] leading-relaxed">{s.lead.map((p) => <p>{p}</p>)}</div>
+            <!-- DRAFT copy below: needs Kevin's approval (src/data/services.ts) -->
+            <div class="mt-4 space-y-4 text-muted">{s.body.map((p) => <p>{p}</p>)}</div>
+            <h3 class="mono mt-8 font-normal text-muted">What’s included</h3>
+            <ul class="mt-3 grid gap-x-8 gap-y-1.5 sm:grid-cols-2">
+              {s.included.map((t) => <li class="flex gap-2.5"><span class="text-accent-ink" aria-hidden="true">—</span>{t}</li>)}
             </ul>
+            {s.related && postByPath.get(s.related) && (
+              <a href={s.related} class="group mt-8 flex items-center justify-between gap-6 border border-line bg-surface p-5 hover:border-fg">
+                <span><span class="mono block text-muted">Related article</span><span class="item-title mt-1 block font-medium leading-snug">{postByPath.get(s.related)!.data.title}</span></span>
+                <span class="arrow text-accent-ink" aria-hidden="true">→</span>
+              </a>
+            )}
           </div>
-          {s.related && postByPath.get(s.related) && (
-            <a href={s.related} class="reveal group mt-6 flex items-center justify-between gap-6 border border-white/15 p-6 transition hover:bg-white/[.03] sm:p-8">
-              <span>
-                <span class="label block">Related article</span>
-                <span class="display mt-3 block text-2xl leading-[1.02] sm:text-3xl">{postByPath.get(s.related)!.data.title}</span>
-              </span>
-              <span class="text-xl transition group-hover:translate-x-1" aria-hidden="true">→</span>
-            </a>
-          )}
-        </div>
-      </div>
-    </section>
-  ))}
+        </section>
+      ))}
+    </div>
+
+    <div class="reveal mt-24 flex flex-wrap items-end justify-between gap-8 border-t border-fg pt-8">
+      <h2 class="max-w-[14ch] text-display">Need a hand on your project?</h2>
+      <a href={siteData.contactPath} class="btn btn-primary">Get in touch <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </div>
 </BaseLayout>

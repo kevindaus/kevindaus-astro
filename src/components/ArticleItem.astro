@@ -1,0 +1,20 @@
+---
+// One article in a plain list: mono date, title (accent on hover, "→" slides in), reading time, tags.
+// The title morphs into the article page's H1 (shared transition:name).
+import { postPath, isoDate, readingTime, type Post } from '../lib/content';
+interface Props { post: Post; heading?: 'h2' | 'h3'; showDescription?: boolean; showTags?: boolean; index?: number }
+const { post, heading = 'h3', showDescription = false, showTags = false, index = 0 } = Astro.props;
+const { title, date, description, tags } = post.data;
+const H = heading;
+---
+<li class="border-b border-line" data-tags={tags.join('|')} style={`--i:${Math.min(index, 5)}`}>
+  <a href={postPath(post)} class="group grid gap-x-8 gap-y-1.5 py-5 sm:grid-cols-[7.5rem_1fr_auto] sm:items-baseline">
+    <time class="mono text-subtle" datetime={date.toISOString()}>{isoDate(date)}</time>
+    <div class="min-w-0">
+      <H class="item-title text-[1.0625rem] font-medium leading-snug" transition:name={`post-title-${post.id}`}>{title}</H>
+      {showDescription && <p class="mt-1.5 text-[.9375rem] text-muted">{description}</p>}
+      {showTags && tags.length > 0 && <p class="mt-2.5 flex flex-wrap gap-1.5">{tags.map((t) => <span class="tag">{t}</span>)}</p>}
+    </div>
+    <span class="mono flex items-center gap-2 text-subtle sm:justify-end">{readingTime(post.body)} min read <span class="item-arrow text-accent-ink" aria-hidden="true">→</span></span>
+  </a>
+</li>

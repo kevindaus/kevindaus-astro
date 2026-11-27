@@ -1,0 +1,19 @@
+---
+// Editorial section opener on the 12-col grid: index + label in the narrow left column,
+// oversized heading (and optional intro) on the right, optional "see all" link.
+interface Props { index?: string; label: string; title: string; id?: string; intro?: string; link?: { href: string; label: string }; level?: 'h1' | 'h2'; size?: 'display' | 'title' }
+const { index, label, title, id, intro, link, level = 'h2', size = 'display' } = Astro.props;
+const H = level;
+---
+<div class="reveal grid gap-6 border-t border-fg pt-6 md:grid-cols-12 md:gap-8">
+  <p class="mono text-muted md:col-span-3">{index && <span class="text-accent-ink">{index} </span>}{label}</p>
+  <div class="md:col-span-9">
+    <H id={id} class:list={[size === 'display' ? 'text-display' : 'text-title', 'max-w-[18ch]']}>{title}</H>
+    {(intro || link) && (
+      <div class="mt-6 flex flex-wrap items-end justify-between gap-6">
+        {intro && <p class="max-w-[52ch] text-lg text-muted">{intro}</p>}
+        {link && <a href={link.href} class="group mono inline-flex items-center gap-2 hover:text-accent-ink"><span class="link-underline">{link.label}</span> <span class="arrow" aria-hidden="true">→</span></a>}
+      </div>
+    )}
+  </div>
+</div>

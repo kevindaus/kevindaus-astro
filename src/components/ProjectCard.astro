@@ -1,0 +1,26 @@
+---
+// Editorial project card: large image (1.00 → 1.03 on hover), category, title, stack, description, details link.
+// Placeholder entries are visibly marked.
+import ProjectImage from './ProjectImage.astro';
+import { workPath, type CaseStudy } from '../lib/content';
+interface Props { item: CaseStudy; index?: number; heading?: 'h2' | 'h3'; wide?: boolean }
+const { item, index = 0, heading = 'h3', wide = false } = Astro.props;
+const { title, category, description, stack, cover, coverAlt, coverPosition, placeholder, via } = item.data;
+const H = heading;
+const n = String(index + 1).padStart(2, '0');
+---
+<article class:list={['group relative', wide && 'md:col-span-2']}>
+  <div class:list={['thumb relative border border-line bg-surface', wide ? 'aspect-[16/9]' : 'aspect-[4/3]']} transition:name={`work-cover-${item.id}`}>
+    <ProjectImage src={cover} alt={coverAlt} label={title} position={coverPosition} sizes={wide ? '(min-width: 1280px) 1180px, 92vw' : '(min-width: 768px) 590px, 92vw'} />
+  </div>
+  <div class="mt-5 grid gap-x-6 gap-y-2 sm:grid-cols-[3rem_1fr]">
+    <p class="mono text-accent-ink">{n}</p>
+    <div>
+      <p class="mono flex flex-wrap items-center gap-2 text-muted">{category}{via && <span>· with {via}</span>}{placeholder && <span class="border border-accent px-1.5 py-0.5 text-accent-ink">Placeholder</span>}</p>
+      <H class="mt-2 text-heading"><a href={workPath(item)} class="item-title after:absolute after:inset-0" transition:name={`work-title-${item.id}`}>{title}</a></H>
+      <p class="mt-3 max-w-[56ch] text-muted">{description}</p>
+      {stack.length > 0 && <p class="mono mt-4 text-subtle">{stack.join(' / ')}</p>}
+      <p class="mono mt-5 inline-flex items-center gap-2"><span class="link-underline">View details</span> <span class="arrow text-accent-ink" aria-hidden="true">→</span></p>
+    </div>
+  </div>
+</article>

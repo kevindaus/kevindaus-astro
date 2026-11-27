@@ -1,141 +1,142 @@
 ---
-// Home — approved mockup UI/home-v4.html. Copy verbatim from the live homepage.
-// Portfolio section removed for launch (Kevin, 2026-09-29).
+// Home — "Editorial" redesign (docs/kevinflorenzdaus-redesign-prompt-gpt.md):
+// hero → selected work → about → services → technology stack → testimonials → writing → contact.
+// Copy: src/data/home.ts (sources marked), src/data/testimonials.ts + src/data/stack.ts.
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Portrait from '../components/Portrait.astro';
-import Ticker from '../components/Ticker.astro';
-import Eyebrow from '../components/Eyebrow.astro';
-import ArticleRow from '../components/ArticleRow.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Testimonial from '../components/Testimonial.astro';
+import ArticleItem from '../components/ArticleItem.astro';
 import { site } from '../data/site';
 import { seo } from '../data/seo';
-import { getPosts } from '../lib/content';
-import { homeServices } from '../data/services';
-import mandy from '../assets/people/mandy-pawley.jpg';
-import stuart from '../assets/people/stuart-cox.jpg';
+import { hero, about, services, contactCopy } from '../data/home';
+import { testimonials } from '../data/testimonials';
+import { stack } from '../data/stack';
+import { getPosts, getWork } from '../lib/content';
+import portrait from '../assets/people/kevin-florenz-daus.png';
 
-const posts = await getPosts();
-
-const whatIDoBest = ['WordPress Development', 'On-Site SEO', 'WordPress Custom Plugin Development', 'General Website Development', 'Website Maintenance and Support Services'];
+const posts = (await getPosts()).slice(0, 3);
+const work = (await getWork()).slice(0, 3);
+const words = hero.headline.split(' ');
+const agencies = [...new Set(work.map((w) => w.data.via).filter(Boolean))];
 ---
 <BaseLayout title={seo.home.title} description={seo.home.description} path="/">
   <!-- HERO -->
-  <section class="relative flex flex-col overflow-hidden pt-28 pb-12 sm:pt-32">
-    <div class="spotlight absolute inset-0" aria-hidden="true"></div>
-    <div class="relative mx-auto grid w-full max-w-7xl flex-1 items-end gap-10 px-4 sm:px-6 lg:grid-cols-12">
-      <div class="relative z-10 pt-10 lg:col-span-7">
-        <p class="reveal flex items-center gap-3 text-xs uppercase tracking-[.3em] text-smoke"><span class="h-px w-10 bg-smoke" aria-hidden="true"></span> Kevin Florenz Daus</p>
-        <h1 class="reveal display mt-6 text-display-hero">
-          <span class="block">PHP Developer&nbsp;<span class="text-smoke">/</span></span>
-          <span class="block">WordPress</span>
-          <span class="block text-transparent [-webkit-text-stroke:1.5px_var(--color-bone)]">Developer</span>
-        </h1>
-        <div class="reveal mt-10 flex flex-wrap gap-3">
-          <a href={site.contactUrl} class="group inline-flex items-center gap-4 bg-bone px-7 py-4 text-xs font-bold uppercase tracking-[.25em] text-noir transition hover:bg-white">Contact Me <span class="transition group-hover:translate-x-1" aria-hidden="true">→</span></a>
-          <a href="/about-me/" class="inline-flex items-center border border-white/30 px-7 py-4 text-xs font-bold uppercase tracking-[.25em] transition hover:border-bone">About Me</a>
-        </div>
+  <section class="mx-auto max-w-wide px-5 pt-14 pb-20 sm:px-8 sm:pt-20 lg:px-12 lg:pt-28 lg:pb-28">
+    <p class="hero-item mono text-muted" style="--i:0"><span class="mr-3 inline-block h-2 w-2 bg-accent align-middle" aria-hidden="true"></span>{hero.identity}</p>
+    <h1 class="words mt-8 max-w-[11ch] text-hero font-bold">
+      {words.map((w, i) => <><span class="w"><span class="wi" style={`--i:${i}`}>{w}</span></span>{i < words.length - 1 && ' '}</>)}
+    </h1>
+    <div class="mt-12 grid gap-10 border-t border-line pt-8 lg:grid-cols-12 lg:gap-8">
+      <p class="hero-item max-w-[34ch] text-xl leading-snug text-fg lg:col-span-5" style="--i:5">{hero.supporting}</p>
+      <div class="hero-item flex flex-wrap items-start gap-3 lg:col-span-3 lg:flex-col" style="--i:6">
+        <a href={work.length ? '#work' : '/services/'} class="btn btn-primary">{work.length ? 'Explore My Work' : 'Explore Services'} <span class="arrow" aria-hidden="true">→</span></a>
+        <a href="/about-me/" class="btn btn-secondary">About Me <span class="arrow" aria-hidden="true">→</span></a>
       </div>
-      <div class="relative lg:col-span-5">
-        <Portrait fig="01" eager class="mx-auto max-w-sm lg:max-w-none">
-          <div class="absolute bottom-16 left-3 w-[calc(100%-1.5rem)] border border-white/15 bg-noir/95 shadow-[12px_12px_0_rgba(0,0,0,.6)] sm:-left-12 sm:w-80">
-            <div class="flex items-center justify-between border-b border-white/15 px-4 py-2 text-[11px] text-smoke"><span>~/kevin</span><span>zsh</span></div>
-            <div class="p-4 text-[12.5px] leading-relaxed">
-              <p class="text-smoke" data-type>$ whoami</p>
-              <p class="caret">A web developer focusing in WordPress CMS , Laravel and Yii.</p>
-            </div>
-          </div>
-        </Portrait>
-      </div>
-    </div>
-    <div class="relative mx-auto mt-12 flex w-full max-w-7xl items-center justify-between px-4 text-[11px] uppercase tracking-[.3em] text-smoke sm:px-6" aria-hidden="true">
-      <span>Scroll</span><span class="hidden sm:block">PHP · WordPress · Laravel · Yii</span>
+      <dl class="hero-item grid gap-4 sm:grid-cols-3 lg:col-span-4 lg:grid-cols-1" style="--i:7">
+        {hero.facts.map((f) => <div class="flex gap-4 lg:border-b lg:border-line lg:pb-3"><dt class="mono w-24 shrink-0 text-muted">{f.label}</dt><dd class="text-[.9375rem]">{f.value}</dd></div>)}
+      </dl>
     </div>
   </section>
 
-  <Ticker items={whatIDoBest} label="What I do best" />
+  <!-- SELECTED WORK -->
+  {work.length > 0 && (
+    <section id="work" class="mx-auto max-w-wide scroll-mt-24 px-5 py-16 sm:px-8 lg:px-12 lg:py-24" aria-labelledby="work-title">
+      <SectionHeader index="01" label="Selected work" title="Things I’ve built." id="work-title" link={{ href: '/work/', label: 'All work' }}
+        intro={agencies.length ? `Projects marked “with ${agencies.join('/')}” are websites I worked on while working with ${agencies.join(' and ')}.` : undefined} />
+      <div class="mt-12 grid gap-x-8 gap-y-16 md:grid-cols-2">
+        {work.map((item, i) => <div class:list={['reveal', i === 0 && 'md:col-span-2']}><ProjectCard item={item} index={i} wide={i === 0} /></div>)}
+      </div>
+    </section>
+  )}
 
   <!-- ABOUT -->
-  <section id="about" class="py-28 sm:py-40">
-    <div class="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-12">
-      <div class="reveal lg:col-span-4">
-        <Eyebrow n="01" text="A bit about me" />
-        <ul class="mt-8 space-y-2 text-sm">
-          {site.aboutSocials.map((s) => <li><a href={s.href} class="link-u" rel="me noopener" target="_blank">{s.label} ↗</a></li>)}
-        </ul>
+  <section class="mx-auto max-w-wide px-5 py-16 sm:px-8 lg:px-12 lg:py-24" aria-labelledby="about-title">
+    <div class="reveal grid gap-6 border-t border-fg pt-6 md:grid-cols-12 md:gap-8">
+      <p class="mono text-muted md:col-span-3"><span class="text-accent-ink">02 </span>About</p>
+      <div class="md:col-span-9">
+        <h2 id="about-title" class="max-w-[18ch] text-display">{about.title}</h2>
       </div>
-      <div class="reveal lg:col-span-8">
-        <h2 class="display text-display-statement">
-          A web developer focusing in <span class="bg-bone px-2 text-noir [box-decoration-break:clone]">WordPress CMS</span>, Laravel <span class="text-smoke">and</span> Yii.
-        </h2>
-        <!-- the live site's meta description (verbatim), surfaced as visible copy (logged) -->
-        <p class="mt-12 max-w-2xl border-l border-white/20 pl-6 text-base leading-relaxed text-bone/80 sm:text-lg">{seo.home.description}</p>
+    </div>
+    <div class="mt-12 grid gap-10 md:grid-cols-12 md:gap-8">
+      <figure class="reveal md:col-span-3">
+        <Image src={portrait} alt="Kevin Florenz Daus" width={360} height={414} class="h-auto w-48 border border-line bg-surface grayscale md:w-full" />
+        <figcaption class="mono mt-3 text-muted">Kevin Florenz Daus</figcaption>
+      </figure>
+      <div class="reveal space-y-5 text-lg leading-relaxed md:col-span-6 md:col-start-5">
+        {about.paragraphs.map((p, i) => <p class:list={[i > 0 && 'text-muted']}>{p}</p>)}
+        <a href="/about-me/" class="group mono inline-flex items-center gap-2 pt-2 hover:text-accent-ink"><span class="link-underline">More about me</span> <span class="arrow" aria-hidden="true">→</span></a>
       </div>
     </div>
   </section>
 
   <!-- SERVICES -->
-  <section class="pb-28 sm:pb-40">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6">
-      <div class="reveal border-t border-white/15 pt-10">
-        <Eyebrow n="02" text="What I do best" />
-        <h2 class="display mt-5 max-w-5xl text-display-section">Things I do to help you with your business.</h2>
-      </div>
-      <div class="mt-16 grid border-t border-l border-white/15 md:grid-cols-2">
-        {homeServices.map((s, i) => (
-          <article class="svc reveal group relative flex flex-col border-r border-b border-white/15 p-6 sm:p-10">
-            <div class="flex items-baseline justify-between text-xs uppercase tracking-[.25em] text-smoke"><span>No. 0{i + 1}</span><span aria-hidden="true" class="transition group-hover:translate-x-1 group-hover:text-bone">→</span></div>
-            <div class="mt-6 aspect-[16/9] overflow-hidden"><Image src={s.image!.src} alt={s.image!.alt} widths={[480, 768, 1024]} sizes="(min-width: 768px) 560px, 92vw" class="noir-img h-full w-full object-cover" /></div>
-            <h3 class="display mt-8 text-4xl sm:text-5xl"><a href={`/services/#${s.slug}`} class="after:absolute after:inset-0">{s.title}</a></h3>
-            <p class="mt-5 text-bone/75">{s.lead[0]}</p>
-            <p class="mt-4">{s.lead[1]}</p>
-          </article>
+  <section class="mx-auto max-w-wide px-5 py-16 sm:px-8 lg:px-12 lg:py-24" aria-labelledby="services-title">
+    <SectionHeader index="03" label="Services" title="Things I do to help you with your business." id="services-title" link={{ href: '/services/', label: 'All services' }} />
+    <ol class="reveal-stagger mt-12 grid gap-px border-y border-line bg-line md:grid-cols-2 lg:grid-cols-3">
+      {services.map((s, i) => (
+        <li class="bg-bg">
+          <a href={s.href} class="group flex h-full flex-col p-6 lg:p-8">
+            <span class="mono text-accent-ink">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="item-title mt-8 text-2xl tracking-tight">{s.title}</h3>
+            <p class="mt-3 text-muted">{s.text}</p>
+            <span class="item-arrow mt-6 text-accent-ink" aria-hidden="true">→</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- TECHNOLOGY STACK -->
+  <section class="mx-auto max-w-wide px-5 py-16 sm:px-8 lg:px-12 lg:py-24" aria-labelledby="stack-title">
+    <SectionHeader index="04" label="Technology" title="The stack." id="stack-title" size="title" />
+    <div class="mt-10 md:grid md:grid-cols-12 md:gap-8">
+      <dl class="reveal-stagger md:col-span-9 md:col-start-4">
+        {stack.map((g) => (
+          <div class="grid gap-3 border-b border-line py-5 sm:grid-cols-[10rem_1fr]">
+            <dt class="mono pt-1 text-muted">{g.group}</dt>
+            <dd class="font-display text-xl leading-relaxed tracking-tight">{g.items.join(' / ')}</dd>
+          </div>
         ))}
-      </div>
-      <a href="/services/" class="reveal mt-10 inline-flex items-center gap-4 border border-white/30 px-7 py-4 text-xs font-bold uppercase tracking-[.25em] transition hover:border-bone">All services <span aria-hidden="true">→</span></a>
+      </dl>
     </div>
   </section>
 
-  <!-- TESTIMONIALS (inverted) -->
-  <section class="bg-bone py-28 text-noir sm:py-40">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6">
-      <div class="reveal border-b border-noir/20 pb-8">
-        <Eyebrow text="Testimonial" n="03" tone="light" />
-        <h2 class="display mt-5 text-display-section">My Client Said</h2>
-      </div>
-      <div class="mt-14 grid gap-12 lg:grid-cols-12 lg:gap-16">
-        <figure class="reveal lg:col-span-5">
-          <p class="display text-[7rem] leading-[.6] text-noir/15" aria-hidden="true">“</p>
-          <blockquote class="display text-4xl leading-none sm:text-5xl">Kevin was a fantastic part of my team. He produced quality websites and was always eager to learn new skills and help with whatever he could.</blockquote>
-          <figcaption class="mt-10 flex items-center gap-4 border-t border-noir/20 pt-6">
-            <Image src={mandy} alt="Mandy Pawley" width={112} height={112} class="h-14 w-14 object-cover grayscale contrast-125" />
-            <div class="text-sm"><p class="font-bold uppercase tracking-[.15em]">Mandy Pawley</p><p class="text-ash">Marketing Manager at Tindo Solar</p></div>
-          </figcaption>
-        </figure>
-        <figure class="reveal lg:col-span-7">
-          <p class="display text-[7rem] leading-[.6] text-noir/15" aria-hidden="true">“</p>
-          <blockquote class="text-base leading-relaxed text-noir/80 sm:text-lg">
-            <span class="display mb-6 block text-4xl leading-none text-noir sm:text-5xl">Kevin is one of the finest developers ive had the pleasure of dealing with.</span>
-            Kevin was a full time member of my team for over 2 years, and I couldn't have been happier with what we achieved. No job was too small or too big for Kevin. His infectious attitude to work was a pleasure to deal with on a daily basis. Whilst im sad Kevin is no longer part of our team, I wish him continued success into the future, and look forward to witnessing his continued ascent as a developer.
-          </blockquote>
-          <figcaption class="mt-10 flex items-center gap-4 border-t border-noir/20 pt-6">
-            <Image src={stuart} alt="Stuart Cox" width={112} height={112} class="h-14 w-14 object-cover grayscale contrast-125" />
-            <div class="text-sm"><p class="font-bold uppercase tracking-[.15em]">Stuart Cox</p><p class="text-ash">Digital Consultant / Creative Director</p></div>
-          </figcaption>
-        </figure>
-      </div>
+  <!-- TESTIMONIALS -->
+  <section class="mx-auto max-w-wide px-5 py-16 sm:px-8 lg:px-12 lg:py-24" aria-labelledby="testimonials-title">
+    <SectionHeader index="05" label="Testimonials" title="My Client Said" id="testimonials-title" size="title" />
+    <div class="reveal-stagger mt-12 grid gap-12 md:grid-cols-12 md:gap-8">
+      {testimonials.map((t, i) => <div class:list={[i === 0 ? 'md:col-span-5' : 'md:col-span-7']}><Testimonial {...t} index={i} /></div>)}
     </div>
   </section>
 
-  <!-- LATEST ARTICLES (verbatim from /articles/; logged addition) -->
-  <section id="articles" class="py-28 sm:py-40">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6">
-      <div class="reveal">
-        <Eyebrow n="04" text="Articles" />
-        <h2 class="display mt-5 text-display-section">Articles</h2>
-      </div>
-      <ul class="mt-12 border-t border-white/15">
-        {posts.map((p) => <ArticleRow post={p} variant="home" />)}
+  <!-- WRITING -->
+  <section class="mx-auto max-w-wide px-5 py-16 sm:px-8 lg:px-12 lg:py-24" aria-labelledby="writing-title">
+    <SectionHeader index="06" label="Articles" title="Notes from the work." id="writing-title" size="title" link={{ href: '/articles/', label: 'All articles' }} />
+    <div class="md:grid md:grid-cols-12 md:gap-8">
+      <ul class="reveal-stagger mt-10 border-t border-line md:col-span-9 md:col-start-4">
+        {posts.map((p, i) => <ArticleItem post={p} index={i} />)}
       </ul>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="bg-invert-bg text-invert-fg" aria-labelledby="contact-title">
+    <div class="mx-auto max-w-wide px-5 py-20 sm:px-8 lg:px-12 lg:py-32">
+      <p class="reveal mono opacity-75"><span class="text-accent">07 </span>Contact</p>
+      <h2 id="contact-title" class="reveal mt-8 max-w-[14ch] text-hero font-bold">{contactCopy.heading}</h2>
+      <div class="reveal mt-12 grid gap-10 border-t border-invert-fg/20 pt-8 md:grid-cols-12 md:gap-8">
+        <p class="max-w-[36ch] text-xl leading-snug md:col-span-5">{contactCopy.intro}</p>
+        <div class="md:col-span-3">
+          <a href={site.contactPath} class="btn border-transparent bg-accent text-accent-fg hover:bg-invert-fg hover:text-invert-bg">Get in touch <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+        <dl class="space-y-3 md:col-span-4">
+          {site.email && <div class="flex gap-4"><dt class="mono w-24 opacity-75">Email</dt><dd><a href={`mailto:${site.email}`} class="link-underline">{site.email}</a></dd></div>}
+          <div class="flex gap-4"><dt class="mono w-24 opacity-75">LinkedIn</dt><dd><a href={site.linkedin} class="link-underline" rel="noopener" target="_blank">kevinflorenzdaus<span class="sr-only"> (opens in a new tab)</span> <span aria-hidden="true">↗</span></a></dd></div>
+          <div class="flex gap-4"><dt class="mono w-24 opacity-75">Form</dt><dd><a href={site.contactPath} class="link-underline">/contact/</a></dd></div>
+        </dl>
+      </div>
     </div>
   </section>
 </BaseLayout>

@@ -1,40 +1,64 @@
 ---
 import '../styles/global.css';
+import { ClientRouter, fade } from 'astro:transitions';
 import SeoHead from '../components/SeoHead.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
-import CtaBand from '../components/CtaBand.astro';
 import { site } from '../data/site';
 import type { ComponentProps } from 'astro/types';
 // preload the two critical faces (same hashed files the CSS uses) so late font swaps can't shift layout
-import antonUrl from '@fontsource/anton/files/anton-latin-400-normal.woff2?url';
+import displayUrl from '@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url';
+import interUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import monoUrl from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 
-type Props = ComponentProps<typeof SeoHead> & { cta?: boolean };
-const { cta = true, ...seo } = Astro.props;
+type Props = ComponentProps<typeof SeoHead>;
+const seo = Astro.props;
 ---
 <!doctype html>
 <html lang={site.lang}>
   <head>
     <SeoHead {...seo} />
-    <link rel="preload" href={antonUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={displayUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={interUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={monoUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="alternate" type="application/rss+xml" title="Kevin Florenz Daus — Articles" href="/rss.xml" />
     <script is:inline>
-      // motion: mark JS early so the curtain covers first paint, then lift it (also a failsafe if the main script fails)
-      document.documentElement.classList.add('js');
-      addEventListener('DOMContentLoaded', () => setTimeout(() => { const c = document.querySelector('.curtain'); if (c && !c.classList.contains('closing')) c.classList.add('open'); }, 120));
+      // Before first paint: theme (saved choice, else the system's), the JS flag that lets motion.css hide
+      // reveal targets, and the homepage hero entrance (first load in a session, not on back/forward).
+      // Re-applied after every ClientRouter swap, which replaces <html>'s attributes.
+      (function () {
+        var r = document.documentElement;
+        function apply() {
+          var t = null;
+          try { t = localStorage.getItem('theme'); } catch (e) {}
+          var dark = t ? t === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+          r.classList.toggle('dark', dark);
+          r.setAttribute('data-js', '');
+          var m = document.querySelector('meta[name="theme-color"]');
+          if (m) m.setAttribute('content', dark ? '#171717' : '#F5F4F0');
+        }
+        apply();
+        if (location.pathname === '/') {
+          try {
+            var nav = performance.getEntriesByType('navigation')[0];
+            if (!sessionStorage.getItem('kd-hero') && !(nav && nav.type === 'back_forward')) r.setAttribute('data-hero', '');
+            sessionStorage.setItem('kd-hero', '1');
+          } catch (e) {}
+        }
+        document.addEventListener('astro:after-swap', apply);
+      })();
     </script>
+    <ClientRouter />
     <!-- Cloudflare Web Analytics: enable in the Pages dashboard (automatic injection) at launch; no cookies, no banner -->
   </head>
-  <body class="bg-noir font-mono text-[15px] leading-relaxed text-bone">
+  <body>
     <SiteHeader />
-    <main id="content">
+    <main id="content" tabindex="-1" class="outline-none" transition:animate={fade({ duration: '250ms' })}>
       <slot />
-      {cta && <CtaBand />}
     </main>
     <SiteFooter />
     <script>
-      import '../scripts/motion.ts';
+      import '../scripts/ui.ts';
     </script>
   </body>
 </html>

@@ -1,0 +1,165 @@
+---
+// Contact form → POST /api/contact (Pages Function, functions/api/contact.ts).
+// Works without JS (the function answers with a redirect to /contact/sent/); with JS it submits
+// in place: inline errors, a spinner, a success check, then the form gives way to a thank-you note.
+// Turnstile spam protection renders only when PUBLIC_TURNSTILE_SITE_KEY is set at build time.
+import { site } from '../data/site';
+import { projectTypes } from '../data/contact';
+interface Props { idPrefix?: string }
+const { idPrefix = 'contact' } = Astro.props;
+const id = (s: string) => `${idPrefix}-${s}`;
+const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undefined;
+---
+<div data-contact>
+  <form action="/api/contact" method="post" data-contact-form novalidate class="space-y-5">
+    <div class="grid gap-5 sm:grid-cols-2">
+      <div>
+        <label for={id('name')} class="field-label">Name</label>
+        <input id={id('name')} name="name" type="text" autocomplete="name" required maxlength="200" class="field-input" aria-describedby={id('name-error')} />
+        <p id={id('name-error')} class="field-error" data-error-for="name" hidden></p>
+      </div>
+      <div>
+        <label for={id('email')} class="field-label">Email</label>
+        <input id={id('email')} name="email" type="email" autocomplete="email" required maxlength="320" class="field-input" aria-describedby={id('email-error')} />
+        <p id={id('email-error')} class="field-error" data-error-for="email" hidden></p>
+      </div>
+    </div>
+    <div>
+      <label for={id('type')} class="field-label">Project type</label>
+      <select id={id('type')} name="projectType" required class="field-input" aria-describedby={id('type-error')}>
+        <option value="">Choose one…</option>
+        {projectTypes.map((t) => <option value={t}>{t}</option>)}
+      </select>
+      <p id={id('type-error')} class="field-error" data-error-for="projectType" hidden></p>
+    </div>
+    <div>
+      <label for={id('message')} class="field-label">Message</label>
+      <textarea id={id('message')} name="message" required minlength="20" maxlength="5000" rows="6" class="field-input" aria-describedby={id('message-error')}></textarea>
+      <p id={id('message-error')} class="field-error" data-error-for="message" hidden></p>
+    </div>
+    <!-- honeypot: real people never see or fill this -->
+    <div class="absolute -left-[9999px]" aria-hidden="true">
+      <label for={id('company')}>Company</label>
+      <input id={id('company')} name="company" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+    {turnstileKey && <div class="cf-turnstile" data-sitekey={turnstileKey} data-theme="auto"></div>}
+
+    <div class="flex flex-wrap items-center gap-4 pt-1">
+      <button type="submit" class="btn btn-primary min-w-[10rem] justify-center" data-submit>
+        <span data-state-idle class="inline-flex items-center gap-2">Send message <span class="arrow" aria-hidden="true">→</span></span>
+        <span data-state-loading class="hidden items-center gap-2"><span class="spinner" aria-hidden="true"></span>Sending…</span>
+        <span data-state-done class="hidden items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="m5 12 5 5L20 7" /></svg>Sent</span>
+      </button>
+      <p class="text-sm text-muted">Or message me on <a href={site.linkedin} class="text-link link-underline" rel="noopener" target="_blank">LinkedIn<span class="sr-only"> (opens in a new tab)</span></a>.</p>
+    </div>
+    <p class="field-error" data-form-error role="alert" hidden></p>
+  </form>
+
+  <div class="form-success rounded-md border border-line p-6" data-contact-success tabindex="-1" hidden>
+    <p class="mono text-accent-ink">Message sent</p>
+    <p class="mt-2 text-lg font-medium">Thanks, your message is on its way.</p>
+    <p class="mt-1 text-muted">I’ll get back to you by email soon.</p>
+  </div>
+</div>
+
+{turnstileKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+
+<script>
+  const MESSAGES: Record<string, string> = {
+    name: 'Please enter your name.',
+    email: 'Please enter a valid email address.',
+    projectType: 'Please choose a project type.',
+    message: 'Please tell me a little about the project (at least 20 characters).',
+  };
+  const FAIL = 'Something went wrong sending your message. Please try again, or message me on LinkedIn.';
+
+  function validate(form: HTMLFormElement) {
+    const errors: Record<string, string> = {};
+    const v = (n: string) => String(new FormData(form).get(n) ?? '').trim();
+    if (!v('name')) errors.name = MESSAGES.name;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v('email'))) errors.email = MESSAGES.email;
+    if (!v('projectType')) errors.projectType = MESSAGES.projectType;
+    if (v('message').length < 20) errors.message = MESSAGES.message;
+    return errors;
+  }
+
+  function showErrors(form: HTMLFormElement, errors: Record<string, string>) {
+    form.querySelectorAll<HTMLElement>('[data-error-for]').forEach((el) => {
+      const name = el.dataset.errorFor!;
+      const field = form.elements.namedItem(name) as HTMLInputElement | null;
+      const msg = errors[name];
+      el.textContent = msg ?? '';
+      el.hidden = !msg;
+      field?.setAttribute('aria-invalid', String(Boolean(msg)));
+    });
+    const first = Object.keys(errors)[0];
+    if (first) (form.elements.namedItem(first) as HTMLElement | null)?.focus();
+  }
+
+  function setState(btn: HTMLButtonElement, state: 'idle' | 'loading' | 'done') {
+    for (const s of ['idle', 'loading', 'done']) {
+      const el = btn.querySelector<HTMLElement>(`[data-state-${s}]`)!;
+      el.classList.toggle('hidden', s !== state);
+      el.classList.toggle('inline-flex', s === state);
+    }
+    btn.disabled = state !== 'idle';
+  }
+
+  function init() {
+    document.querySelectorAll<HTMLFormElement>('[data-contact-form]').forEach((form) => {
+      if (form.dataset.ready) return;
+      form.dataset.ready = '1';
+      const root = form.closest<HTMLElement>('[data-contact]')!;
+      const btn = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+      const formError = form.querySelector<HTMLElement>('[data-form-error]')!;
+
+      // clear a field's error as soon as it becomes valid
+      form.addEventListener('input', (e) => {
+        const t = e.target as HTMLInputElement;
+        if (t.getAttribute('aria-invalid') === 'true' && !validate(form)[t.name]) {
+          t.setAttribute('aria-invalid', 'false');
+          const el = form.querySelector<HTMLElement>(`[data-error-for="${t.name}"]`);
+          if (el) el.hidden = true;
+        }
+      });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        formError.hidden = true;
+        const errors = validate(form);
+        showErrors(form, errors);
+        if (Object.keys(errors).length) return;
+
+        setState(btn, 'loading');
+        try {
+          const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.ok) {
+            setState(btn, 'idle');
+            if (data.errors) showErrors(form, data.errors);
+            else { formError.textContent = FAIL; formError.hidden = false; }
+            (window as any).turnstile?.reset?.();
+            return;
+          }
+          setState(btn, 'done');
+          const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+          const done = () => {
+            form.hidden = true;
+            const ok = root.querySelector<HTMLElement>('[data-contact-success]')!;
+            ok.hidden = false;
+            ok.focus({ preventScroll: true });
+          };
+          if (reduce) return done();
+          setTimeout(() => {
+            form.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 150, easing: 'cubic-bezier(0.7, 0, 0.84, 0)', fill: 'forwards' }).finished.then(done);
+          }, 700);
+        } catch {
+          setState(btn, 'idle');
+          formError.textContent = FAIL;
+          formError.hidden = false;
+        }
+      });
+    });
+  }
+  document.addEventListener('astro:page-load', init);
+</script>

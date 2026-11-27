@@ -1,5 +1,5 @@
 // Experience — verbatim from the live /about-me/ (captured 2026-09-29), live order (newest first).
-// Shared by /about-me/ and the homepage-v2 draft.
+// Used by /about-me/.
 export type Job = [role: string, org: string, dates: string, location: string];
 
 export const jobs: Job[] = [

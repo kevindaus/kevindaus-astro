@@ -23,6 +23,18 @@ export const seo = {
     description:
       'WordPress development, on-page SEO, WordPress custom plugin development, general web development with Laravel and Yii, and website maintenance. Things I do to help you with your business.',
   },
+  // DRAFT (redesign, 2026-11-27): new pages, titles follow the live pattern
+  work: {
+    title: 'Work - Kevin Florenz Daus - PHP Programmer / WordPress Developer',
+    description: 'Selected WordPress, Laravel and PHP projects: the client, the problem, what I did and the outcome.',
+  },
+  contact: {
+    title: 'Contact - Kevin Florenz Daus - PHP Programmer / WordPress Developer',
+    description: 'Get in touch about a WordPress build, maintenance and security, Laravel or PHP development, or technical SEO.',
+  },
+  contactSent: {
+    title: 'Message sent - Kevin Florenz Daus',
+  },
   notFound: {
     title: 'Page not found - Kevin Florenz Daus',
   },

@@ -1,0 +1,10 @@
+---
+// Note / tip / warning box for articles and case studies.
+interface Props { type?: 'note' | 'tip' | 'warning'; title?: string }
+const { type = 'note', title } = Astro.props;
+const label = { note: 'note', tip: 'tip', warning: 'warning' }[type];
+---
+<aside class:list={['not-prose my-8 rounded-md border px-5 py-4', type === 'warning' ? 'border-danger/40' : 'border-accent/30 bg-accent-soft']} role="note">
+  <p class:list={['mono', type === 'warning' ? 'text-danger' : 'text-accent-ink']}>{label}{title && <span class="text-fg"> · {title}</span>}</p>
+  <div class="callout-body mt-2 text-[.9375rem] [&_li]:mt-1 [&_ul]:list-disc [&_ul]:pl-5"><slot /></div>
+</aside>

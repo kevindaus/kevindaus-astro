@@ -1,0 +1,204 @@
+/* Motion layer — subtle and purposeful. Spec table: docs/design-system.md § Motion.
+   Rules: animate only transform / opacity (+ colour, and clip-path for image reveals); nothing bounces or overshoots;
+   content is visible without JS (hidden states are gated on html[data-js]); everything has a
+   reduced-motion fallback in the block at the bottom. */
+
+@theme static {
+  --duration-instant: 100ms; /* colour/state changes, focus */
+  --duration-fast: 150ms;    /* hovers, presses, underlines */
+  --duration-base: 250ms;    /* reveals, dropdowns, toggles */
+  --duration-slow: 400ms;    /* page transitions, hero entrance */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);     /* entering */
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);      /* leaving */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); /* between states */
+  --distance-sm: 4px;  /* hover lifts, nudges */
+  --distance-md: 12px; /* scroll reveals */
+  --stagger: 60ms;     /* list item delay (capped at 6 items) */
+}
+
+/* ---------- scroll reveal (src/scripts/reveal.ts adds .is-in once) ---------- */
+.reveal,
+.reveal-stagger > * {
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * var(--stagger));
+}
+html[data-js] .reveal:not(.is-in),
+html[data-js] .reveal-stagger:not(.is-in) > * {
+  opacity: 0;
+  transform: translateY(var(--distance-md));
+}
+
+/* ---------- hero entrance (home, first load in a session only; see BaseLayout) ---------- */
+html[data-hero] .hero-item {
+  animation: fade-up var(--duration-slow) var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+
+/* ---------- status dot ---------- */
+.status-dot { animation: pulse 2.4s var(--ease-in-out) infinite; }
+
+/* ---------- link underline: draws left → right ---------- */
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  transition: background-size var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+}
+.link-underline:hover, .link-underline:focus-visible { background-size: 100% 1px; }
+
+/* ---------- buttons: lift on hover, press on active, arrow nudge ---------- */
+.btn {
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    translate var(--duration-fast) var(--ease-out),
+    scale var(--duration-instant) var(--ease-out);
+}
+.btn-primary:hover { translate: 0 calc(var(--distance-sm) * -1); }
+.btn:active { scale: .98; translate: 0 0; }
+.arrow { display: inline-block; transition: translate var(--duration-fast) var(--ease-out); }
+.group:hover .arrow, .btn:hover .arrow { translate: 3px 0; }
+
+/* ---------- article list item: title → accent, "→" fades in and slides 4px ---------- */
+.item-title { transition: color var(--duration-fast) var(--ease-out); }
+.group:hover .item-title, .group:focus-visible .item-title { color: var(--c-accent-ink); }
+.item-arrow { opacity: 0; translate: calc(var(--distance-sm) * -1) 0; transition: opacity var(--duration-fast) var(--ease-out), translate var(--duration-fast) var(--ease-out); }
+.group:hover .item-arrow, .group:focus-visible .item-arrow { opacity: 1; translate: 0 0; }
+
+/* ---------- project card image: 1.00 → 1.03 inside a clipped frame ---------- */
+.thumb { overflow: hidden; }
+.thumb > * { transition: scale var(--duration-slow) var(--ease-out); }
+.group:hover .thumb > *, .group:focus-visible .thumb > * { scale: 1.03; }
+
+/* ---------- hero headline: staggered word reveal (first load in a session, see BaseLayout) ---------- */
+.words .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .08em; margin-bottom: -.08em; }
+.words .wi { display: inline-block; }
+html[data-hero] .words .wi {
+  animation: word-up 700ms var(--ease-out) both;
+  animation-delay: calc(80ms + var(--i, 0) * var(--stagger));
+}
+
+/* ---------- image reveal (case study covers): wipes up once in view ---------- */
+.img-reveal { transition: clip-path 900ms var(--ease-in-out); }
+html[data-js] .img-reveal:not(.is-in) { clip-path: inset(100% 0 0 0); }
+.img-reveal.is-in { clip-path: inset(0 0 0 0); }
+.img-reveal > * { transition: scale 1200ms var(--ease-out); }
+html[data-js] .img-reveal:not(.is-in) > * { scale: 1.06; }
+
+/* ---------- header: hairline + blur fade in once scrolled; hides on scroll down (mobile only) ---------- */
+.site-header { transition: translate var(--duration-base) var(--ease-out); }
+.site-header::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  border-bottom: 1px solid var(--c-line);
+  background: color-mix(in srgb, var(--c-bg) 82%, transparent);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  opacity: 0; transition: opacity var(--duration-fast) var(--ease-out);
+}
+.site-header[data-scrolled]::before { opacity: 1; }
+@media (max-width: 767px) {
+  .site-header[data-hidden] { translate: 0 -100%; transition-timing-function: var(--ease-in); }
+}
+
+/* ---------- mobile menu: slide/fade in (base, ease-out), out (fast, ease-in); links stagger 30ms ---------- */
+.mobile-menu {
+  opacity: 0; transform: translateY(-8px); visibility: hidden;
+  transition: opacity var(--duration-fast) var(--ease-in), transform var(--duration-fast) var(--ease-in), visibility 0s linear var(--duration-fast);
+}
+.mobile-menu[data-open] {
+  opacity: 1; transform: none; visibility: visible;
+  transition: opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out), visibility 0s;
+}
+.mobile-menu li { opacity: 0; transform: translateY(-4px); transition: opacity var(--duration-fast) var(--ease-in), transform var(--duration-fast) var(--ease-in); }
+.mobile-menu[data-open] li {
+  opacity: 1; transform: none;
+  transition: opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 30ms);
+}
+
+/* ---------- theme toggle: sun/moon cross-rotate (≤90°) + fade ---------- */
+.theme-icon { transition: opacity var(--duration-base) var(--ease-in-out), rotate var(--duration-base) var(--ease-in-out); }
+.theme-icon--moon { opacity: 0; rotate: -90deg; }
+.dark .theme-icon--sun { opacity: 0; rotate: 90deg; }
+.dark .theme-icon--moon { opacity: 1; rotate: 0deg; }
+/* the circular reveal is driven from JS (WAAPI on ::view-transition-new(root)); stop the default cross-fade */
+html[data-theme-switching]::view-transition-old(root),
+html[data-theme-switching]::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
+/* ---------- copy button ---------- */
+.copy-btn { display: inline-flex; align-items: center; gap: .375rem; border-radius: var(--radius-sm); padding: .25rem .5rem; font-family: var(--font-mono); font-size: .75rem; color: var(--c-muted); cursor: pointer; transition: color var(--duration-fast) var(--ease-out), background-color var(--duration-fast) var(--ease-out); }
+.copy-btn:hover { color: var(--c-fg); background: var(--c-line); }
+.copy-btn .copy-done { display: none; }
+.copy-btn[data-copied] .copy-idle { display: none; }
+.copy-btn[data-copied] .copy-done { display: inline-flex; animation: fade-in var(--duration-fast) var(--ease-out); color: var(--c-accent-ink); }
+
+/* ---------- reading progress: CSS scroll timeline, JS fallback sets --progress ---------- */
+.read-progress {
+  position: fixed; inset: 0 0 auto; height: 2px; z-index: 60; pointer-events: none;
+  background: var(--c-accent); transform-origin: 0 50%; transform: scaleX(var(--progress, 0));
+}
+@supports (animation-timeline: scroll()) {
+  .read-progress { animation: progress linear both; animation-timeline: scroll(root block); }
+}
+
+/* ---------- table of contents: sliding indicator ---------- */
+.toc-indicator {
+  position: absolute; left: 0; top: 0; width: 2px; height: 1px; background: var(--c-accent);
+  transform-origin: 0 0; opacity: 0;
+  transition: transform var(--duration-base) var(--ease-in-out), opacity var(--duration-fast) var(--ease-out);
+}
+.toc a { transition: color var(--duration-fast) var(--ease-out); }
+.toc a[aria-current='true'] { color: var(--c-fg); }
+
+/* ---------- forms ---------- */
+.field-input { transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out); }
+.field-error:not([hidden]) { animation: fade-in var(--duration-base) var(--ease-out); }
+.spinner { width: 1em; height: 1em; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; }
+.form-success:not([hidden]) { animation: fade-up var(--duration-base) var(--ease-out); }
+
+/* ---------- article filter: quick fade while the list reflows ---------- */
+.filter-list { transition: opacity var(--duration-base) var(--ease-out); }
+.filter-list.is-filtering { opacity: 0; transition: opacity var(--duration-fast) var(--ease-in); }
+
+/* ---------- page transitions (Astro ClientRouter) ---------- */
+html { scroll-behavior: smooth; }
+
+@keyframes word-up { from { transform: translateY(105%); } to { transform: none; } }
+@keyframes fade-up { from { opacity: 0; transform: translateY(var(--distance-md)); } to { opacity: 1; transform: none; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* ---------- reduced motion: no movement; state changes are instant or a ≤100ms fade ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  html[data-js] .reveal:not(.is-in),
+  html[data-js] .reveal-stagger:not(.is-in) > * { opacity: 1; transform: none; }
+  .reveal, .reveal-stagger > * { transition: none; }
+  html[data-hero] .hero-item { animation: none; }
+  .status-dot, .spinner { animation: none; }
+  .spinner { border-right-color: currentColor; opacity: .6; }
+  .read-progress { display: none; }
+  .btn-primary:hover { translate: none; }
+  .btn:active { scale: none; }
+  .group:hover .arrow, .btn:hover .arrow, .group:hover .item-arrow { translate: none; }
+  .item-arrow { translate: none; transition: opacity var(--duration-instant) linear; }
+  .group:hover .thumb > *, .group:focus-visible .thumb > * { scale: none; }
+  html[data-hero] .words .wi { animation: none; }
+  .img-reveal, .img-reveal > * { transition: none; }
+  html[data-js] .img-reveal:not(.is-in) { clip-path: none; }
+  html[data-js] .img-reveal:not(.is-in) > * { scale: none; }
+  .site-header, .site-header[data-hidden] { translate: none; transition: none; }
+  .mobile-menu, .mobile-menu[data-open], .mobile-menu li, .mobile-menu[data-open] li {
+    transform: none; transition: opacity var(--duration-instant) linear, visibility 0s; transition-delay: 0s;
+  }
+  .theme-icon { rotate: 0deg !important; transition: opacity var(--duration-instant) linear; }
+  .toc-indicator { transition: none; }
+  .form-success:not([hidden]), .field-error:not([hidden]), .copy-btn[data-copied] .copy-done { animation: fade-in var(--duration-instant) linear; }
+  .is-filtering, .filter-list { transition: opacity var(--duration-instant) linear; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}

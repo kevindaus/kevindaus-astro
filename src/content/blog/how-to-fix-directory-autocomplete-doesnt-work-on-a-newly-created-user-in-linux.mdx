@@ -1,19 +1,19 @@
 ---
 title: "How To Fix directory autocomplete doesn’t work on a newly created user in debian linux"
-pubDate: 2022-04-12T07:46:20Z
-excerpt: "So you have created your own droplet and created a new user but your terminal autocomplete doesn’t work. Here’s a quick solution for you."
-categories: [Linux]
+date: 2022-04-12T07:46:20Z
+description: "So you have created your own droplet and created a new user but your terminal autocomplete doesn’t work. Here’s a quick solution for you."
+tags: [Linux]
 path: /2022/04/12/how-to-fix-directory-autocomplete-doesnt-work-on-a-newly-created-user-in-linux/
 seoTitle: "How To Fix directory autocomplete doesn't work on a newly created user in debian linux - Kevin Florenz Daus - PHP Programmer / WordPress Developer"
 seoDescription: "In this tutorial I will show you how to fix directory autocomplete that doesnt work on newly created debian linux user"
 ---
-import Terminal from '../../components/Terminal.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
 
 So you have created your own droplet and created a new user but your terminal autocomplete doesn’t work. Here’s a quick solution for you.
 
 First, login using a sudoer account and run the command.
 
-<Terminal code={`# tip: remember the user to created from running sudo adduser imTheNewUser
+<CodeBlock code={`# tip: remember the user to created from running sudo adduser imTheNewUser
 # tip : make sure the user you used to login into the system is a sudoer 
 sudo -u imTheNewUser -s /bin/bash`} />
 
