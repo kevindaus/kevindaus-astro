@@ -1,0 +1,40 @@
+---
+import '../styles/global.css';
+import SeoHead from '../components/SeoHead.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site } from '../data/site';
+import type { ComponentProps } from 'astro/types';
+// preload the two critical faces (same hashed files the CSS uses) so late font swaps can't shift layout
+import antonUrl from '@fontsource/anton/files/anton-latin-400-normal.woff2?url';
+import monoUrl from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
+
+type Props = ComponentProps<typeof SeoHead> & { cta?: boolean };
+const { cta = true, ...seo } = Astro.props;
+---
+<!doctype html>
+<html lang={site.lang}>
+  <head>
+    <SeoHead {...seo} />
+    <link rel="preload" href={antonUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={monoUrl} as="font" type="font/woff2" crossorigin />
+    <script is:inline>
+      // motion: mark JS early so the curtain covers first paint, then lift it (also a failsafe if the main script fails)
+      document.documentElement.classList.add('js');
+      addEventListener('DOMContentLoaded', () => setTimeout(() => { const c = document.querySelector('.curtain'); if (c && !c.classList.contains('closing')) c.classList.add('open'); }, 120));
+    </script>
+    <!-- Cloudflare Web Analytics: enable in the Pages dashboard (automatic injection) at launch; no cookies, no banner -->
+  </head>
+  <body class="bg-noir font-mono text-[15px] leading-relaxed text-bone">
+    <SiteHeader />
+    <main id="content">
+      <slot />
+      {cta && <CtaBand />}
+    </main>
+    <SiteFooter />
+    <script>
+      import '../scripts/motion.ts';
+    </script>
+  </body>
+</html>

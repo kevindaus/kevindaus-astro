@@ -1,0 +1,141 @@
+---
+// Home — approved mockup UI/home-v4.html. Copy verbatim from the live homepage.
+// Portfolio section removed for launch (Kevin, 2026-09-29).
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Portrait from '../components/Portrait.astro';
+import Ticker from '../components/Ticker.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import ArticleRow from '../components/ArticleRow.astro';
+import { site } from '../data/site';
+import { seo } from '../data/seo';
+import { getPosts } from '../lib/content';
+import { homeServices } from '../data/services';
+import mandy from '../assets/people/mandy-pawley.jpg';
+import stuart from '../assets/people/stuart-cox.jpg';
+
+const posts = await getPosts();
+
+const whatIDoBest = ['WordPress Development', 'On-Site SEO', 'WordPress Custom Plugin Development', 'General Website Development', 'Website Maintenance and Support Services'];
+---
+<BaseLayout title={seo.home.title} description={seo.home.description} path="/">
+  <!-- HERO -->
+  <section class="relative flex flex-col overflow-hidden pt-28 pb-12 sm:pt-32">
+    <div class="spotlight absolute inset-0" aria-hidden="true"></div>
+    <div class="relative mx-auto grid w-full max-w-7xl flex-1 items-end gap-10 px-4 sm:px-6 lg:grid-cols-12">
+      <div class="relative z-10 pt-10 lg:col-span-7">
+        <p class="reveal flex items-center gap-3 text-xs uppercase tracking-[.3em] text-smoke"><span class="h-px w-10 bg-smoke" aria-hidden="true"></span> Kevin Florenz Daus</p>
+        <h1 class="reveal display mt-6 text-display-hero">
+          <span class="block">PHP Developer&nbsp;<span class="text-smoke">/</span></span>
+          <span class="block">WordPress</span>
+          <span class="block text-transparent [-webkit-text-stroke:1.5px_var(--color-bone)]">Developer</span>
+        </h1>
+        <div class="reveal mt-10 flex flex-wrap gap-3">
+          <a href={site.contactUrl} class="group inline-flex items-center gap-4 bg-bone px-7 py-4 text-xs font-bold uppercase tracking-[.25em] text-noir transition hover:bg-white">Contact Me <span class="transition group-hover:translate-x-1" aria-hidden="true">→</span></a>
+          <a href="/about-me/" class="inline-flex items-center border border-white/30 px-7 py-4 text-xs font-bold uppercase tracking-[.25em] transition hover:border-bone">About Me</a>
+        </div>
+      </div>
+      <div class="relative lg:col-span-5">
+        <Portrait fig="01" eager class="mx-auto max-w-sm lg:max-w-none">
+          <div class="absolute bottom-16 left-3 w-[calc(100%-1.5rem)] border border-white/15 bg-noir/95 shadow-[12px_12px_0_rgba(0,0,0,.6)] sm:-left-12 sm:w-80">
+            <div class="flex items-center justify-between border-b border-white/15 px-4 py-2 text-[11px] text-smoke"><span>~/kevin</span><span>zsh</span></div>
+            <div class="p-4 text-[12.5px] leading-relaxed">
+              <p class="text-smoke" data-type>$ whoami</p>
+              <p class="caret">A web developer focusing in WordPress CMS , Laravel and Yii.</p>
+            </div>
+          </div>
+        </Portrait>
+      </div>
+    </div>
+    <div class="relative mx-auto mt-12 flex w-full max-w-7xl items-center justify-between px-4 text-[11px] uppercase tracking-[.3em] text-smoke sm:px-6" aria-hidden="true">
+      <span>Scroll</span><span class="hidden sm:block">PHP · WordPress · Laravel · Yii</span>
+    </div>
+  </section>
+
+  <Ticker items={whatIDoBest} label="What I do best" />
+
+  <!-- ABOUT -->
+  <section id="about" class="py-28 sm:py-40">
+    <div class="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-12">
+      <div class="reveal lg:col-span-4">
+        <Eyebrow n="01" text="A bit about me" />
+        <ul class="mt-8 space-y-2 text-sm">
+          {site.aboutSocials.map((s) => <li><a href={s.href} class="link-u" rel="me noopener" target="_blank">{s.label} ↗</a></li>)}
+        </ul>
+      </div>
+      <div class="reveal lg:col-span-8">
+        <h2 class="display text-display-statement">
+          A web developer focusing in <span class="bg-bone px-2 text-noir [box-decoration-break:clone]">WordPress CMS</span>, Laravel <span class="text-smoke">and</span> Yii.
+        </h2>
+        <!-- the live site's meta description (verbatim), surfaced as visible copy (logged) -->
+        <p class="mt-12 max-w-2xl border-l border-white/20 pl-6 text-base leading-relaxed text-bone/80 sm:text-lg">{seo.home.description}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="pb-28 sm:pb-40">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6">
+      <div class="reveal border-t border-white/15 pt-10">
+        <Eyebrow n="02" text="What I do best" />
+        <h2 class="display mt-5 max-w-5xl text-display-section">Things I do to help you with your business.</h2>
+      </div>
+      <div class="mt-16 grid border-t border-l border-white/15 md:grid-cols-2">
+        {homeServices.map((s, i) => (
+          <article class="svc reveal group relative flex flex-col border-r border-b border-white/15 p-6 sm:p-10">
+            <div class="flex items-baseline justify-between text-xs uppercase tracking-[.25em] text-smoke"><span>No. 0{i + 1}</span><span aria-hidden="true" class="transition group-hover:translate-x-1 group-hover:text-bone">→</span></div>
+            <div class="mt-6 aspect-[16/9] overflow-hidden"><Image src={s.image!.src} alt={s.image!.alt} widths={[480, 768, 1024]} sizes="(min-width: 768px) 560px, 92vw" class="noir-img h-full w-full object-cover" /></div>
+            <h3 class="display mt-8 text-4xl sm:text-5xl"><a href={`/services/#${s.slug}`} class="after:absolute after:inset-0">{s.title}</a></h3>
+            <p class="mt-5 text-bone/75">{s.lead[0]}</p>
+            <p class="mt-4">{s.lead[1]}</p>
+          </article>
+        ))}
+      </div>
+      <a href="/services/" class="reveal mt-10 inline-flex items-center gap-4 border border-white/30 px-7 py-4 text-xs font-bold uppercase tracking-[.25em] transition hover:border-bone">All services <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS (inverted) -->
+  <section class="bg-bone py-28 text-noir sm:py-40">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6">
+      <div class="reveal border-b border-noir/20 pb-8">
+        <Eyebrow text="Testimonial" n="03" tone="light" />
+        <h2 class="display mt-5 text-display-section">My Client Said</h2>
+      </div>
+      <div class="mt-14 grid gap-12 lg:grid-cols-12 lg:gap-16">
+        <figure class="reveal lg:col-span-5">
+          <p class="display text-[7rem] leading-[.6] text-noir/15" aria-hidden="true">“</p>
+          <blockquote class="display text-4xl leading-none sm:text-5xl">Kevin was a fantastic part of my team. He produced quality websites and was always eager to learn new skills and help with whatever he could.</blockquote>
+          <figcaption class="mt-10 flex items-center gap-4 border-t border-noir/20 pt-6">
+            <Image src={mandy} alt="Mandy Pawley" width={112} height={112} class="h-14 w-14 object-cover grayscale contrast-125" />
+            <div class="text-sm"><p class="font-bold uppercase tracking-[.15em]">Mandy Pawley</p><p class="text-ash">Marketing Manager at Tindo Solar</p></div>
+          </figcaption>
+        </figure>
+        <figure class="reveal lg:col-span-7">
+          <p class="display text-[7rem] leading-[.6] text-noir/15" aria-hidden="true">“</p>
+          <blockquote class="text-base leading-relaxed text-noir/80 sm:text-lg">
+            <span class="display mb-6 block text-4xl leading-none text-noir sm:text-5xl">Kevin is one of the finest developers ive had the pleasure of dealing with.</span>
+            Kevin was a full time member of my team for over 2 years, and I couldn't have been happier with what we achieved. No job was too small or too big for Kevin. His infectious attitude to work was a pleasure to deal with on a daily basis. Whilst im sad Kevin is no longer part of our team, I wish him continued success into the future, and look forward to witnessing his continued ascent as a developer.
+          </blockquote>
+          <figcaption class="mt-10 flex items-center gap-4 border-t border-noir/20 pt-6">
+            <Image src={stuart} alt="Stuart Cox" width={112} height={112} class="h-14 w-14 object-cover grayscale contrast-125" />
+            <div class="text-sm"><p class="font-bold uppercase tracking-[.15em]">Stuart Cox</p><p class="text-ash">Digital Consultant / Creative Director</p></div>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- LATEST ARTICLES (verbatim from /articles/; logged addition) -->
+  <section id="articles" class="py-28 sm:py-40">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6">
+      <div class="reveal">
+        <Eyebrow n="04" text="Articles" />
+        <h2 class="display mt-5 text-display-section">Articles</h2>
+      </div>
+      <ul class="mt-12 border-t border-white/15">
+        {posts.map((p) => <ArticleRow post={p} variant="home" />)}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>

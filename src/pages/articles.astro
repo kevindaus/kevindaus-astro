@@ -1,0 +1,79 @@
+---
+// Articles archive — approved mockup UI/articles-v1.html. H1, subtitle, titles, dates, excerpts, "Read More »" verbatim.
+// "No Comments" meta dropped (no comments on the new site). Category filter added (wayfinding).
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import CategoryChip from '../components/CategoryChip.astro';
+import ArticleRow from '../components/ArticleRow.astro';
+import { seo } from '../data/seo';
+import { getPosts, postPath, fmtDate } from '../lib/content';
+import { breadcrumb } from '../lib/schema';
+
+const posts = await getPosts();
+const [feat] = posts;
+const cats = ['How-To', 'WordPress', 'WooCommerce', 'Laravel', 'Linux'].filter((c) => posts.some((p) => p.data.categories.includes(c)));
+const site = Astro.site!.href;
+const url = new URL('/articles/', Astro.site).href;
+---
+<BaseLayout title={seo.articles.title} description={seo.articles.description} path="/articles/" pageType="CollectionPage"
+  schemaNodes={[
+    breadcrumb(site, [{ name: 'Articles', url }]),
+    { '@type': 'ItemList', '@id': `${url}#list`, itemListElement: posts.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: new URL(postPath(p), Astro.site).href, name: p.data.title })) },
+  ]}>
+  <section class="relative overflow-hidden border-b border-white/10 pt-32 pb-16 sm:pt-40">
+    <div class="spotlight absolute inset-0" aria-hidden="true"></div>
+    <div class="relative mx-auto grid max-w-7xl items-end gap-8 px-4 sm:px-6 lg:grid-cols-12">
+      <div class="lg:col-span-12">
+        <Breadcrumbs items={[{ label: 'Articles' }]} />
+        <h1 class="reveal display mt-6 text-display-page">Articles</h1>
+      </div>
+      <p class="reveal border-l border-white/20 pl-6 text-base text-bone/75 lg:col-span-5 lg:col-start-8">Read the latest blog posts about general web development , Laravel, PHP and WordPress</p>
+    </div>
+  </section>
+
+  <section class="py-16 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6">
+      {feat && (
+        <a href={postPath(feat)} class="reveal group grid border border-white/15 transition hover:bg-white/[.03] lg:grid-cols-12">
+          <div class="overflow-hidden border-b border-white/15 bg-noir-800 lg:col-span-7 lg:border-r lg:border-b-0">
+            {feat.data.heroImage && <Image src={feat.data.heroImage} alt={feat.data.heroAlt ?? ''} widths={[640, 1024]} sizes="(min-width: 1024px) 740px, 92vw" class="noir-img h-full w-full object-cover group-hover:scale-[1.03]" />}
+          </div>
+          <div class="flex flex-col p-6 sm:p-10 lg:col-span-5">
+            <div class="flex flex-wrap gap-2">{feat.data.categories.map((c) => <CategoryChip label={c} inverted />)}</div>
+            <p class="mt-6 text-xs uppercase tracking-[.2em] text-smoke"><time datetime={feat.data.pubDate.toISOString()}>{fmtDate(feat.data.pubDate)}</time></p>
+            <h2 class="display mt-4 text-4xl leading-[.98] sm:text-5xl">{feat.data.title}</h2>
+            <p class="mt-6 text-sm text-bone/70">{feat.data.excerpt}</p>
+            <p class="mt-auto pt-10 text-xs font-bold uppercase tracking-[.25em]">Read More »</p>
+          </div>
+        </a>
+      )}
+
+      <div class="reveal mt-20 flex flex-wrap items-center gap-2" role="group" aria-label="Filter by category">
+        <span class="label mr-3" aria-hidden="true">Filter</span>
+        <button type="button" class="filter bg-bone px-4 py-2 text-xs font-bold uppercase tracking-[.2em] text-noir" data-f="*" aria-pressed="true">All</button>
+        {cats.map((c) => <button type="button" class="filter border border-white/25 px-4 py-2 text-xs font-bold uppercase tracking-[.2em] hover:border-bone" data-f={c} aria-pressed="false">{c}</button>)}
+      </div>
+      <ul id="postList" class="mt-8 border-t border-white/15">
+        {posts.map((p, i) => <ArticleRow post={p} class={i === 0 ? 'feat-dup' : ''} />)}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style is:global>
+  /* the latest post is featured above; hide its duplicate row on desktop unless a filter is active */
+  @media (min-width: 1024px) { body:not(.filtering) .feat-dup { display: none; } }
+</style>
+
+<script>
+  const btns = document.querySelectorAll<HTMLButtonElement>('.filter');
+  const rows = document.querySelectorAll<HTMLElement>('#postList > li');
+  const ON = ['bg-bone', 'text-noir'], OFF = ['border', 'border-white/25', 'hover:border-bone'];
+  btns.forEach((b) => b.addEventListener('click', () => {
+    const f = b.dataset.f!;
+    btns.forEach((x) => { const on = x === b; x.setAttribute('aria-pressed', String(on)); x.classList.remove(...ON, ...OFF); x.classList.add(...(on ? ON : OFF)); });
+    document.body.classList.toggle('filtering', f !== '*');
+    rows.forEach((r) => { r.style.display = f === '*' || (r.dataset.cats ?? '').split('|').includes(f) ? '' : 'none'; });
+  }));
+</script>

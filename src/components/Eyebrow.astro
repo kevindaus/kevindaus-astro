@@ -1,0 +1,5 @@
+---
+interface Props { n?: string; text: string; tone?: 'dark' | 'light' }
+const { n, text, tone = 'dark' } = Astro.props;
+---
+<p class:list={['text-xs uppercase tracking-[.3em]', tone === 'dark' ? 'text-smoke' : 'text-ash']}>{n && `[${n}] `}{text}</p>

@@ -1,0 +1,18 @@
+---
+title: "How to save model without triggering events in Laravel"
+pubDate: 2022-04-14T05:21:31Z
+excerpt: "I faced this problem yesterday while playing with Laravel where I need to save a model but I dont want to trigger any model events…"
+categories: [Laravel]
+path: /2022/04/14/how-to-save-model-without-triggering-events-in-laravel/
+seoTitle: "How to save model without triggering events in Laravel - Kevin Florenz Daus - PHP Programmer / WordPress Developer"
+seoDescription: "I faced this problem yesterday while playing with Laravel where I need to save a model but I dont want to trigger any model events ."
+---
+import Terminal from '../../components/Terminal.astro';
+
+I faced this problem yesterday while playing with Laravel where I need to save a model but I dont want to trigger any model events .
+
+Im amazed how Laravel already thought this problem would arise and made a simple solution for it.
+
+<Terminal label="php" code={`$raceEvent = RaceEvent::last();
+$raceEvent->venue = "Test Venue";
+$raceEvent->saveQuietly(); // magic sauce here`} />

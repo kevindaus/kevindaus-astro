@@ -1,0 +1,14 @@
+# Design playground (playbook §4) — disposable, never needed by the build
+UI/
+
+.DS_Store
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+!.env.example
+.vercel/
+
+# build
+.wrangler/

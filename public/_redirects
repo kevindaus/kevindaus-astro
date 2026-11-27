@@ -1,0 +1,20 @@
+# Redirect map — every rule has a row in docs/redirects.md (approved 2026-09-29).
+# 410s (test pages, /feed/) are Pages Functions in functions/ — _redirects can't send 410.
+
+# WordPress archives
+/category/*        /articles/   301
+/author/*          /about-me/   301
+/2022/             /articles/   301
+/2022/04/          /articles/   301
+/2022/04/12/       /articles/   301
+/2022/04/14/       /articles/   301
+/2022/04/25/       /articles/   301
+/2023/             /articles/   301
+/2023/02/          /articles/   301
+/2023/02/03/       /articles/   301
+
+# placeholder / empty pages
+/services-v2/      /services/   301
+/services-v2       /services/   301
+/thank-you-page/   /            301
+/thank-you-page    /            301

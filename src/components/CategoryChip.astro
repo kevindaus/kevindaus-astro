@@ -1,0 +1,5 @@
+---
+interface Props { label: string; inverted?: boolean }
+const { label, inverted = false } = Astro.props;
+---
+<span class:list={['px-2.5 py-1 text-[10px] font-bold uppercase tracking-[.2em]', inverted ? 'bg-bone text-noir' : 'border border-white/25 text-bone']}>{label}</span>

@@ -1,0 +1,25 @@
+---
+// Code block in terminal chrome with a Copy button. Pass the code as the `code` prop (plain text);
+// `comment` lines (starting with #) are dimmed.
+interface Props { code: string; label?: string }
+const { code, label = 'bash' } = Astro.props;
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const html = code.split('\n').map((line) => {
+  const i = line.indexOf('//');
+  if (/^\s*#/.test(line)) return `<span class="c">${esc(line)}</span>`;
+  if (label === 'php' && i >= 0) return esc(line.slice(0, i)) + `<span class="c">${esc(line.slice(i))}</span>`;
+  return esc(line);
+}).join('\n');
+---
+<div class="term not-prose my-8">
+  <div class="term-bar"><span>{label}</span><button type="button" class="copy-btn" data-copy>Copy</button></div>
+  <pre><code set:html={html} /></pre>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => b.addEventListener('click', () => {
+    const code = b.closest('.term')!.querySelector('pre')!.innerText;
+    navigator.clipboard?.writeText(code);
+    const t = b.textContent; b.textContent = 'Copied'; setTimeout(() => { b.textContent = t; }, 1400);
+  }));
+</script>

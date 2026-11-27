@@ -1,0 +1,116 @@
+---
+// Every blog post at its preserved WordPress URL (/YYYY/MM/DD/slug/). Approved mockup: UI/post-*-v1.html.
+import { getImage } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import CategoryChip from '../components/CategoryChip.astro';
+import { getPosts, postPath, renderPost, fmtDate, fmtTime, type Post } from '../lib/content';
+import { breadcrumb, mainEntityId } from '../lib/schema';
+import { site as siteData } from '../data/site';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  const seen = new Map<string, string>();
+  for (const p of posts) {
+    const path = postPath(p);
+    if (seen.has(path)) throw new Error(`Two posts share the URL ${path}: ${seen.get(path)} and ${p.id}`);
+    seen.set(path, p.id);
+  }
+  // live navigation: "Previous" = older post, "Next" = newer post
+  return posts.map((post, i) => ({
+    params: { path: postPath(post).slice(1, -1) },
+    props: { post, newer: posts[i - 1], older: posts[i + 1] },
+  }));
+}
+
+const { post, newer, older } = Astro.props as { post: Post; newer?: Post; older?: Post };
+const { Content } = await renderPost(post);
+const { title, excerpt, pubDate, updatedDate, heroImage, categories, author, toc, seoTitle, seoDescription } = post.data;
+const path = postPath(post);
+const site = Astro.site!.href;
+const url = new URL(path, Astro.site).href;
+const modified = (updatedDate ?? pubDate).toISOString();
+const ogImage = heroImage ? (await getImage({ src: heroImage, width: 1200, height: 630, fit: 'cover', format: 'jpg' })).src : undefined;
+const entity = mainEntityId(site, siteData.org.type);
+const long = title.length > 90;
+
+const blogPosting = {
+  '@type': 'BlogPosting',
+  '@id': `${url}#article`,
+  headline: title.length > 110 ? (seoTitle ?? title).slice(0, 110) : title,
+  datePublished: pubDate.toISOString(),
+  dateModified: modified,
+  author: { '@id': entity },
+  publisher: { '@id': entity },
+  mainEntityOfPage: { '@id': `${url}#webpage` },
+  articleSection: categories,
+  inLanguage: siteData.lang,
+  ...(ogImage && { image: new URL(ogImage, Astro.site).href }),
+  ...((seoDescription ?? excerpt) && { description: seoDescription ?? excerpt }),
+};
+const shareItems = [
+  ['Facebook', `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`],
+  ['Twitter', `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`],
+  ['LinkedIn', `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`],
+];
+---
+<BaseLayout
+  title={seoTitle ?? `${title} - Kevin Florenz Daus - PHP Programmer / WordPress Developer`}
+  description={seoDescription ?? excerpt}
+  path={path}
+  ogType="article"
+  ogImage={ogImage}
+  published={pubDate.toISOString()}
+  modified={modified}
+  schemaNodes={[blogPosting, breadcrumb(site, [{ name: 'Articles', url: new URL('/articles/', Astro.site).href }, { name: title, url }])]}
+>
+  <header class="relative overflow-hidden border-b border-white/10 pt-32 pb-14 sm:pt-40">
+    <div class="spotlight absolute inset-0" aria-hidden="true"></div>
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6">
+      <Breadcrumbs items={[{ label: 'Articles', href: '/articles/' }]} />
+      <div class="reveal mt-8 flex flex-wrap gap-2">{categories.map((c) => <CategoryChip label={c} />)}</div>
+      <h1 class:list={['reveal display mt-6 max-w-6xl', long ? 'text-display-post-long' : 'text-display-post']}>{title}</h1>
+      <div class="reveal mt-10 flex flex-wrap items-center gap-x-8 gap-y-2 text-xs uppercase tracking-[.2em] text-smoke">
+        <span>{author}</span>
+        <time datetime={pubDate.toISOString()}>{fmtDate(pubDate)}</time>
+        <span>{fmtTime(pubDate)}</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="py-16 sm:py-24">
+    <div class="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-12">
+      {toc.length > 0 && (
+        <nav aria-label="On this page" class="hidden lg:col-span-3 lg:block">
+          <div class="sticky top-28">
+            <p class="label">On this page</p>
+            <ul class="mt-5 space-y-2 text-sm">{toc.map((t) => <li><a href={`#${t.id}`} class="link-u text-smoke hover:text-bone">{t.label}</a></li>)}</ul>
+          </div>
+        </nav>
+      )}
+      <article class:list={['prose-noir min-w-0', toc.length ? 'lg:col-span-8' : 'lg:col-span-8 lg:col-start-3']}>
+        <Content />
+        <div class="not-prose mt-16 flex flex-wrap items-center gap-3 border-t border-white/15 pt-8">
+          <span class="label mr-3">Share</span>
+          {shareItems.map(([n, h]) => <a href={h} target="_blank" rel="noopener" class="border border-white/20 px-4 py-2 text-xs uppercase tracking-[.2em] transition hover:bg-bone hover:text-noir">{n}</a>)}
+        </div>
+      </article>
+    </div>
+    <div class="mx-auto max-w-7xl px-4 sm:px-6">
+      <nav aria-label="More articles" class="mt-20 grid gap-4 md:grid-cols-2">
+        {older ? (
+          <a href={postPath(older)} class="group block border border-white/15 p-6 transition hover:bg-white/[.03] sm:p-8">
+            <p class="label"><span aria-hidden="true">←</span> Previous</p>
+            <p class="display mt-4 line-clamp-3 text-2xl leading-[1.02] sm:text-3xl">{older.data.title}</p>
+          </a>
+        ) : <div class="hidden md:block"></div>}
+        {newer && (
+          <a href={postPath(newer)} class="group block border border-white/15 p-6 transition hover:bg-white/[.03] sm:p-8 md:text-right">
+            <p class="label">Next <span aria-hidden="true">→</span></p>
+            <p class="display mt-4 line-clamp-3 text-2xl leading-[1.02] sm:text-3xl">{newer.data.title}</p>
+          </a>
+        )}
+      </nav>
+    </div>
+  </section>
+</BaseLayout>

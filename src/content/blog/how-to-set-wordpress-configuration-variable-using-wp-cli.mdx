@@ -1,0 +1,89 @@
+---
+title: "How to set WordPress configuration variable using wp-cli"
+pubDate: 2023-02-03T13:53:50Z
+excerpt: "Are you still relying on the File Manager in your cPanel to tweak configuration variables for your WordPress website? It’s time to step into 2022!"
+heroImage: ../../assets/blog/wp-cli/what-is-wp-cli.png
+heroAlt: "what is wp-cli"
+categories: [How-To, WordPress]
+path: /2023/02/03/how-to-set-wordpress-configuration-variable-using-wp-cli/
+seoTitle: "How to set WordPress configuration variable using wp-cli - Kevin Florenz Daus - PHP Programmer / WordPress Developer"
+seoDescription: "In this post, I'll be sharing a valuable tip specifically for WordPress owners and developers: how to effortlessly configure your WordPress settings using the"
+toc:
+  - { id: step-1, label: "Step 1" }
+  - { id: step-2, label: "Step 2" }
+  - { id: step-3, label: "Step 3" }
+  - { id: step-4, label: "Step 4" }
+  - { id: step-5, label: "Step 5" }
+  - { id: step-5-1, label: "Step 5.1" }
+---
+import { Image } from 'astro:assets';
+import Terminal from '../../components/Terminal.astro';
+import Shot from '../../components/Shot.astro';
+import whatIs from '../../assets/blog/wp-cli/what-is-wp-cli.png';
+import step1 from '../../assets/blog/wp-cli/step-1-install-wp-cli.png';
+import step3 from '../../assets/blog/wp-cli/step-3-move-the-file-to-path.png';
+import step4 from '../../assets/blog/wp-cli/step-4-verify-installation.png';
+import step5 from '../../assets/blog/wp-cli/step-5-run-some-commands.png';
+import step51 from '../../assets/blog/wp-cli/set-environment-variable.png';
+
+{/* live content repeats the title as a second H1; dropped (one H1 per page) */}
+
+Are you still relying on the File Manager in your cPanel to tweak configuration variables for your WordPress website? It's time to step into 2022! Nowadays, most hosting providers, including popular cloud hosting platforms, offer secure SSH connections to your WordPress site or server. Take Cloudways, for instance—they provide a comprehensive solution for WordPress website management. But let's get back to the core focus of this article.
+
+In this post, I'll be sharing a valuable tip specifically for WordPress owners and developers: how to effortlessly configure your WordPress settings using the wp-cli command.
+
+wp-cli, is a powerful tool designed to simplify WordPress site management through the command line. Whether you're a WordPress owner or developer, wp-cli streamlines tasks like updating configuration variables, making your workflow more efficient. Best of all, **[wp-cli](https://wp-cli.org/) is both free and open-source, and it can be easily installed on any WordPress site**.
+
+<figure class="reveal-img my-10"><Image src={whatIs} alt="what is wp-cli" class="noir-img h-auto w-full border border-white/15" /></figure>
+
+<div class="border border-white/15 p-6 sm:p-8">
+  <p class="text-xs uppercase tracking-[.3em] text-smoke">Required Tools:</p>
+  <ul class="mt-4">
+    <li>SSH Access to Server</li>
+    <li>wp-cli should be installed</li>
+    <li>SSH Client / Terminal</li>
+  </ul>
+</div>
+
+<p class="text-bone">Before we can set WordPress configuration variables using wp-cli, we need to install it on our server. Installing wp-cli is easy and can be done in just a few steps.</p>
+
+<h2 id="step-1" class="step">Step 1 : Lets start by downloading wp-cli</h2>
+
+<Shot src={step1} alt="step 1 install wp-cli" />
+
+<h2 id="step-2" class="step">Step 2 : Make the file executable with the following command:</h2>
+
+{/* live bug: Step 2 shows the Step 1 screenshot again; kept as-is until the real screenshot is supplied */}
+<Shot src={step1} alt="step 1 install wp-cli" />
+
+<h2 id="step-3" class="step">Step 3 : Move the file to a directory in your PATH for easy access using the following command:</h2>
+
+<Shot src={step3} alt="step 3 move the file to path" />
+
+<h2 id="step-4" class="step">Step 4 : Now we are ready to issue wp-cli commands</h2>
+
+But first lets checkout if the installation succeeded. lets run this command :
+
+<Terminal code="wp --version" />
+
+<Shot src={step4} alt="step 4 verify installation" />
+
+<h2 id="step-5" class="step">Step 5 : Now that we verified that wp-cli installation succeeded</h2>
+
+Lets try updating some configurations from wp_options table.<br />Lets try running this command :
+
+<Terminal code="wp option update posts_per_page 11" />
+
+<Shot src={step5} alt="step 5 run some commands" />
+
+<h2 id="step-5-1" class="step">Step 5.1 : We can also update environment variables</h2>
+
+We can also update environment varilables. For example the WP_DEBUG environment variable . Setting this environment variable to true is useful when debugging WordPress website.<br />Lets try running this command :
+
+<Terminal code="wp config set WP_DEBUG true --raw" />
+
+<Shot src={step51} alt="set environment variable" />
+
+## Thats it!
+
+Setting WordPress configuration variables using wp-cli is a quick and easy process that can save you time and hassle.<br />By using wp-cli, you can manage your WordPress site from the command line, making tasks like updating configuration variables much easier.I hope this article has shown you how to set WordPress configuration variables using wp-cli, step-by-step.

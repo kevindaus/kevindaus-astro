@@ -1,0 +1,14 @@
+---
+// Full-bleed bone band of looping Anton words. Speed/skew follow scroll velocity (motion §7).
+interface Props { items: string[]; label: string }
+const { items, label } = Astro.props;
+---
+<section aria-label={label} class="overflow-hidden border-y border-bone bg-bone text-noir">
+  <div class="marquee display py-4 text-3xl sm:text-5xl">
+    {[0, 1].map((n) => (
+      <div class="flex shrink-0 items-center gap-8 pr-8" aria-hidden={n === 1 ? 'true' : undefined}>
+        {items.map((t) => <><span>{t}</span><span aria-hidden="true">—</span></>)}
+      </div>
+    ))}
+  </div>
+</section>
