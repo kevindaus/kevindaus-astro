@@ -1,6 +1,12 @@
 # Redirect map — every rule has a row in docs/redirects.md (approved 2026-09-29).
 # 410s (test pages) are Pages Functions in functions/ — _redirects can't send 410.
 
+# sitemaps: the old Rank Math index and the conventional name → the Astro sitemap index
+/sitemap_index.xml   /sitemap-index.xml   301
+/sitemap.xml         /sitemap-index.xml   301
+/post-sitemap.xml    /sitemap-index.xml   301
+/page-sitemap.xml    /sitemap-index.xml   301
+
 # WordPress archives
 /category/*        /articles/   301
 /author/*          /about-me/   301

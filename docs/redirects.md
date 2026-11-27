@@ -27,6 +27,8 @@ Status: **approved** by Kevin, 2026-09-29.
 | `/category/linux/` | `/articles/` | ″ |
 | `/author/kevin_daus/` | `/about-me/` | Author archive (already 301s on the live site; point it at the person page) |
 | `/2023/`, `/2022/`, `/2022/04/`, `/2023/02/` (date archives) | `/articles/` | Date archives (live `/2023/` already 301s) |
+| `/sitemap_index.xml`, `/post-sitemap.xml`, `/page-sitemap.xml` | `/sitemap-index.xml` | Old Rank Math sitemaps (the one GSC knows) → the Astro sitemap index (2026-11-27) |
+| `/sitemap.xml` | `/sitemap-index.xml` | Conventional sitemap name (2026-11-27) |
 | `/feed/` | `/rss.xml` | Redesign (2026-11-27) adds an RSS feed; the WordPress feed URL (410 on the live site) now points at it. Was a 410 function |
 | `/services-v2/` | `/services/` | Unfinished template page with placeholder copy, in the sitemap. Repointed from `/` to the new Services page (2026-11-12) |
 | `/thank-you-page/` | `/` | Empty page (no form on the new site) |
