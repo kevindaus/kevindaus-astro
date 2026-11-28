@@ -1,0 +1,58 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "astro",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "trailingSlash": true,
+  "redirects": [
+    { "source": "/sitemap_index.xml", "destination": "/sitemap-index.xml", "statusCode": 301 },
+    { "source": "/sitemap.xml", "destination": "/sitemap-index.xml", "statusCode": 301 },
+    { "source": "/post-sitemap.xml", "destination": "/sitemap-index.xml", "statusCode": 301 },
+    { "source": "/page-sitemap.xml", "destination": "/sitemap-index.xml", "statusCode": 301 },
+
+    { "source": "/category/:path*", "destination": "/articles/", "statusCode": 301 },
+    { "source": "/author/:path*", "destination": "/about-me/", "statusCode": 301 },
+    { "source": "/2022/", "destination": "/articles/", "statusCode": 301 },
+    { "source": "/2022/04/", "destination": "/articles/", "statusCode": 301 },
+    { "source": "/2022/04/12/", "destination": "/articles/", "statusCode": 301 },
+    { "source": "/2022/04/14/", "destination": "/articles/", "statusCode": 301 },
+    { "source": "/2022/04/25/", "destination": "/articles/", "statusCode": 301 },
+    { "source": "/2023/", "destination": "/articles/", "statusCode": 301 },
+    { "source": "/2023/02/", "destination": "/articles/", "statusCode": 301 },
+    { "source": "/2023/02/03/", "destination": "/articles/", "statusCode": 301 },
+
+    { "source": "/services-v2/", "destination": "/services/", "statusCode": 301 },
+    { "source": "/thank-you-page/", "destination": "/", "statusCode": 301 },
+    { "source": "/feed/", "destination": "/rss.xml", "statusCode": 301 },
+    { "source": "/contact/", "destination": "https://www.linkedin.com/in/kevinflorenzdaus/", "statusCode": 301 },
+    { "source": "/contact/sent/", "destination": "https://www.linkedin.com/in/kevinflorenzdaus/", "statusCode": 301 }
+  ],
+  "rewrites": [
+    { "source": "/elementor-26542/", "destination": "/api/gone" },
+    { "source": "/elementor-26489/", "destination": "/api/gone" },
+    { "source": "/tteeete/", "destination": "/api/gone" },
+    { "source": "/test-menu/", "destination": "/api/gone" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Strict-Transport-Security", "value": "max-age=63072000" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Content-Security-Policy", "value": "frame-ancestors 'self'" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()" }
+      ]
+    },
+    {
+      "source": "/_astro/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "(?<sub>.*)\\.vercel\\.app" }],
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
+    }
+  ]
+}

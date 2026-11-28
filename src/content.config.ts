@@ -31,7 +31,7 @@ const blog = defineCollection({
 // Case studies at /work/<slug>/. Body sections (## headings): Problem → Approach → Implementation → Outcome.
 // Files starting with "_" are templates and are never built. `placeholder: true` entries are clearly marked
 // stand-ins (no real project supplied yet): noindex, out of the sitemap, and dropped from production builds
-// (`npm run build:prod`, or SITE_ENV=production / CF_PAGES_BRANCH=main).
+// (`npm run build:prod`, or SITE_ENV=production / CF_PAGES_BRANCH=main / VERCEL_ENV=production).
 const work = defineCollection({
   loader: glob({ pattern: ['**/*.{md,mdx}', '!**/_*'], base: './src/content/work' }),
   schema: ({ image }) =>

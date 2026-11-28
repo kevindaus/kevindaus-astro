@@ -12,8 +12,9 @@ export async function getPosts(): Promise<Post[]> {
   return posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 }
 
-/** True for production builds (`npm run build:prod`, or a Cloudflare Pages build of `main`). */
-export const isProductionBuild = () => process.env.SITE_ENV === 'production' || process.env.CF_PAGES_BRANCH === 'main';
+/** True for production builds: `npm run build:prod`, a Cloudflare Pages build of `main`, or a Vercel production build. */
+export const isProductionBuild = () =>
+  process.env.SITE_ENV === 'production' || process.env.CF_PAGES_BRANCH === 'main' || process.env.VERCEL_ENV === 'production';
 
 /** Published case studies, by `order` then newest first. Drafts show in `astro dev` only;
  *  placeholders show everywhere except production builds. */

@@ -1,6 +1,6 @@
 # Redirect Map
 
-Every live URL, and what happens to it at cutover. Default: same path, trailing slash, no redirect. Every change here gets a rule in `public/_redirects` (Cloudflare Pages), and every rule has a row here.
+Every live URL, and what happens to it at cutover. Default: same path, trailing slash, no redirect. Every change here gets a rule in `public/_redirects` (Cloudflare Pages) **and** in `vercel.json` (Vercel), and every rule has a row here. 410s: `functions/<path>/index.ts` (Cloudflare) + a `rewrites` entry to `api/gone.ts` (Vercel).
 Status: **approved** by Kevin, 2026-09-29.
 
 ## Keep (same URL)

@@ -10,7 +10,7 @@ A static Astro rebuild of Kevin's WordPress/Elementor personal site in the appro
 ## Source of Truth
 - Live site: https://kevinflorenzdaus.com — the verbatim content source until it's decommissioned. `legacy/` is reference only.
 - Metadata: docs/seo.md → src/data/seo.ts (pages) + post frontmatter `seoTitle`/`seoDescription` · Person/nav/socials: src/data/site.ts
-- Redirects: docs/redirects.md → `public/_redirects` (301s) + `functions/*` (410s)
+- Redirects: docs/redirects.md → `public/_redirects` (301s) + `functions/*` (410s) on Cloudflare; `vercel.json` + `api/gone.ts` on Vercel (keep both in step)
 - Design: docs/design-system.md (tokens, components, motion spec). docs/design/approved-*.png + `UI/` are the superseded Noir mockups
 - Copy: src/data/home.ts (homepage copy, sources marked) · src/data/stack.ts · src/data/testimonials.ts · src/data/services.ts · case studies in src/content/work/
 Never invent content, NAP, metrics or meta. Missing → ask. Case-study screenshots: blur client names, emails and internal figures before committing (never commit an unredacted original).

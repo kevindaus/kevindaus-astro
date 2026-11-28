@@ -1,4 +1,6 @@
-# Deployment — Cloudflare Pages
+# Deployment — Cloudflare Pages (or Vercel)
+
+Both hosts are configured; pick one at cutover. Cloudflare Pages is below; Vercel is in its own section further down. Keep `public/_redirects` (Cloudflare) and `vercel.json` (Vercel) in step: every rule has a row in docs/redirects.md.
 
 **Config:** `wrangler.toml` (project `kevinflorenzdaus-com`, output `./dist`, compatibility date `2026-10-03`: the newest the pinned wrangler 4.143 runtime supports; bump it together with wrangler). Static output in `dist/`, Pages Functions in `functions/` (410s only), `_redirects` + `_headers` from `public/`. Production branch `main`.
 **Node:** 22 (`.nvmrc`, `engines`). Pages' build image reads `.nvmrc`; set `NODE_VERSION=22` in the project env as a fallback.
@@ -31,6 +33,30 @@ Pages dashboard → Create → Connect to Git → `northbase/kevinflorenzdaus-co
 Every other branch then gets a preview at `<branch>.kevinflorenzdaus-com.pages.dev`. If the project was already created with Option A, it can't be switched to Git: create the Git project under a new name or delete the direct-upload project first.
 
 Previews on `*.pages.dev` send `X-Robots-Tag: noindex` (`public/_headers`). For a stronger preview gate: Cloudflare One → Access → self-hosted app on `*.kevinflorenzdaus-com.pages.dev` **and** `kevinflorenzdaus-com.pages.dev`, allowing listed emails with a one-time PIN. Remove or adjust it before the flip.
+
+
+## Vercel
+
+**Config:** `vercel.json` (framework `astro`, `npm run build` → `dist/`, `trailingSlash: true`), `api/gone.ts` (410s), `.vercelignore` (skips `legacy/`, `UI/`). Node 22 comes from `engines` in package.json.
+
+| Cloudflare | Vercel equivalent |
+|---|---|
+| `public/_redirects` (301s) | `vercel.json` → `redirects` (`statusCode: 301`). Sources are written with the trailing slash, because `trailingSlash: true` 308s `/feed` → `/feed/` first |
+| `functions/*` (410s) | `vercel.json` → `rewrites` to the Vercel Function `api/gone.ts` (Vercel redirects can't send 410) |
+| `public/_headers` | `vercel.json` → `headers`: the same 6 security headers, immutable cache on `/_astro/*`, `X-Robots-Tag: noindex` on every `*.vercel.app` host. Vercel also adds noindex to preview deployments by default |
+| `CF_PAGES_BRANCH=main` | `VERCEL_ENV=production`: production builds drop placeholder case studies automatically (src/lib/content.ts) |
+
+`public/_redirects` and `public/_headers` still ship as plain files in `dist/`. Vercel ignores them.
+
+**Set up (Git):** Vercel → Add New → Project → import the repo. The framework, build command and output come from `vercel.json`. Production branch `main`; every other branch and every merge request gets a preview at `*.vercel.app`.
+**Or CLI:** `! npx vercel login` → `npx vercel link` → `npx vercel` (preview) → 🛑 `npx vercel --prod` (approval required).
+**Local check:** `npx vercel build` (or `VERCEL_ENV=production npx vercel build --prod`) writes `.vercel/output/` (gitignored). Check `config.json` for the routes.
+
+**Cutover on Vercel** 🛑 (the same runbook as below, but with these changes for step 4 and step 5):
+- Project → Settings → Domains → add `kevinflorenzdaus.com` (primary) and `www.kevinflorenzdaus.com` (redirect to the apex, 301/308).
+- DNS stays on Cloudflare. Point the apex A record and `www` CNAME at the values Vercel shows, as **DNS only (grey cloud)**. Proxying through Cloudflare in front of Vercel breaks certificate issuance and caching.
+- Analytics: Cloudflare Web Analytics' automatic injection only works on Pages. On Vercel, either add the Cloudflare beacon snippet with the site token (BaseLayout, where the comment is) or enable Vercel Web Analytics. Kevin's choice.
+- Rollback: Deployments → previous production deployment → Promote (Instant Rollback).
 
 ## Cutover runbook 🛑 needs Kevin's approval at the flip
 

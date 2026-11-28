@@ -49,7 +49,7 @@ const seo = Astro.props;
       })();
     </script>
     <ClientRouter />
-    <!-- Cloudflare Web Analytics: enable in the Pages dashboard (automatic injection) at launch; no cookies, no banner -->
+    <!-- Cloudflare Web Analytics: enable in the Pages dashboard (automatic injection) at launch; no cookies, no banner. On Vercel there's no auto-injection: add the beacon here (docs/deployment.md § Vercel) -->
   </head>
   <body>
     <SiteHeader />
