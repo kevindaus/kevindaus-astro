@@ -1,6 +1,6 @@
 # Deployment — Cloudflare Pages (or Vercel)
 
-Both hosts are configured; pick one at cutover. Cloudflare Pages is below; Vercel is in its own section further down. Keep `public/_redirects` (Cloudflare) and `vercel.json` (Vercel) in step: every rule has a row in docs/redirects.md.
+**Live host: Vercel** (2026-11-28). Kevin moved the nameservers at the registrar (Onamae.com) to `ns1`/`ns2.vercel-dns.com`, so DNS and hosting are both on Vercel now and the Cloudflare zone no longer applies. The Cloudflare Pages config below is kept as a fallback. Keep `public/_redirects` (Cloudflare) and `vercel.json` (Vercel) in step: every rule has a row in docs/redirects.md.
 
 **Config:** `wrangler.toml` (project `kevinflorenzdaus-com`, output `./dist`, compatibility date `2026-10-03`: the newest the pinned wrangler 4.143 runtime supports; bump it together with wrangler). Static output in `dist/`, Pages Functions in `functions/` (410s only), `_redirects` + `_headers` from `public/`. Production branch `main`.
 **Node:** 22 (`.nvmrc`, `engines`). Pages' build image reads `.nvmrc`; set `NODE_VERSION=22` in the project env as a fallback.
@@ -54,7 +54,8 @@ Previews on `*.pages.dev` send `X-Robots-Tag: noindex` (`public/_headers`). For 
 
 **Cutover on Vercel** 🛑 (the same runbook as below, but with these changes for step 4 and step 5):
 - Project → Settings → Domains → add `kevinflorenzdaus.com` (primary) and `www.kevinflorenzdaus.com` (redirect to the apex, 301/308).
-- DNS stays on Cloudflare. Point the apex A record and `www` CNAME at the values Vercel shows, as **DNS only (grey cloud)**. Proxying through Cloudflare in front of Vercel breaks certificate issuance and caching.
+- DNS is on **Vercel DNS** (registrar nameservers → `ns1`/`ns2.vercel-dns.com`, 2026-11-28). Any non-web records from the old Cloudflare zone (MX, SPF/DKIM/DMARC, `google-site-verification` TXT) must be recreated under Vercel → Domains → DNS Records.
+- Domains: `kevinflorenzdaus.com` is primary (serves the site); `www` redirects to the apex.
 - Analytics: Cloudflare Web Analytics' automatic injection only works on Pages. On Vercel, either add the Cloudflare beacon snippet with the site token (BaseLayout, where the comment is) or enable Vercel Web Analytics. Kevin's choice.
 - Rollback: Deployments → previous production deployment → Promote (Instant Rollback).
 

@@ -10,8 +10,8 @@
     { "source": "/post-sitemap.xml", "destination": "/sitemap-index.xml", "statusCode": 301 },
     { "source": "/page-sitemap.xml", "destination": "/sitemap-index.xml", "statusCode": 301 },
 
-    { "source": "/category/:path*", "destination": "/articles/", "statusCode": 301 },
-    { "source": "/author/:path*", "destination": "/about-me/", "statusCode": 301 },
+    { "source": "/category/(.*)", "destination": "/articles/", "statusCode": 301 },
+    { "source": "/author/(.*)", "destination": "/about-me/", "statusCode": 301 },
     { "source": "/2022/", "destination": "/articles/", "statusCode": 301 },
     { "source": "/2022/04/", "destination": "/articles/", "statusCode": 301 },
     { "source": "/2022/04/12/", "destination": "/articles/", "statusCode": 301 },
